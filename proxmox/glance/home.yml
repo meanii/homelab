@@ -153,6 +153,21 @@
             - type: reddit
               subreddit: selfhosted
               show-thumbnails: true
+            - type: reddit
+              subreddit: linux
+              show-thumbnails: true
+            - type: reddit
+              subreddit: programming
+              show-thumbnails: true
+            - type: reddit
+              subreddit: webdev
+              show-thumbnails: true
+            - type: reddit
+              subreddit: devops
+              show-thumbnails: true
+            - type: reddit
+              subreddit: kubernetes
+              show-thumbnails: true
 
     - size: small
       widgets:
