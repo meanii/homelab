@@ -133,11 +133,29 @@
       widgets:
         - type: calendar
           first-day-of-week: monday
+
         - type: hacker-news
           limit: 15
           collapse-after: 5
+
         - type: rss
           title: Golang News
+          limit: 100
+          collapse-after: 5
+          feeds:
+            - url: https://www.reddit.com/r/golang/.rss
+              title: Reddit - r/golang
+            - url: https://dave.cheney.net/feed
+              title: Dave Cheney~@~Ys Go Blog
+            - url: https://golangweekly.com/rss/
+              title: Golang Weekly
+            - url: https://go.dev/blog/feed.atom
+              title: Go.dev Blog
+            - url: https://planetgolang.org/rss20.xml
+              title: Planet Golang (Aggregated Blogs)
+
+        - type: rss
+          title: Golang Jobs
           limit: 15
           collapse-after: 5
           feeds:
