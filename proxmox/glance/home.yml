@@ -135,7 +135,7 @@
           first-day-of-week: monday
 
         - type: hacker-news
-          limit: 15
+          limit: 50
           collapse-after: 5
 
         - type: rss
