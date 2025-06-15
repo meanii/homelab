@@ -5,10 +5,17 @@
   columns:
     - size: small
       widgets:
-        - type: weather
-          units: metric
-          hour-format: 12h
-          location: Delhi, India
+        - type: group
+          widgets:
+            - type: weather
+              units: metric
+              hour-format: 12h
+              location: Delhi, India
+
+            - type: weather
+              units: metric
+              hour-format: 12h
+              location: Babol, Iran
 
         - type: custom-api
           title: Random Fact
@@ -137,6 +144,15 @@
             - UCsBjURrPoezykLs9EqgamOA # Fireship
             - UCBJycsmduvYEL83R_U4JriQ # Marques Brownlee
             - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+
+        - type: group
+          widgets:
+            - type: reddit
+              subreddit: technology
+              show-thumbnails: true
+            - type: reddit
+              subreddit: selfhosted
+              show-thumbnails: true
 
     - size: small
       widgets:
