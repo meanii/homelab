@@ -1,0 +1,35 @@
+---
+services:
+  # nginx proxy manager
+  nginxproxymanager:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - "80:80" # Public HTTP Port
+      - "443:443" # Public HTTPS Port
+      - "81:81" # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+
+    environment:
+      # Uncomment this if you want to change the location of
+      # the SQLite DB file within the container
+      DB_SQLITE_FILE: "/data/database.sqlite"
+
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+    # frp fast reverse proxy to help expose a local services behind a NAT or firewall to the internet.
+  frpc:
+    image: ghcr.io/fatedier/frpc:v0.58.1
+    container_name: frpc
+    restart: unless-stopped
+    network_mode: "host" # Needed to access local services
+    volumes:
+      - ./frpc.toml:/etc/frpc.toml
+    command: -c /etc/frpc.toml

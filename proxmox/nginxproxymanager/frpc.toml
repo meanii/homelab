@@ -1,0 +1,8 @@
+serverAddr = "<tunnel-ip>"
+serverPort = 7000
+
+[[proxies]]
+name = "nginx-wildcard"
+type = "http"
+localPort = 80
+customDomains = ["*.example.com"]
