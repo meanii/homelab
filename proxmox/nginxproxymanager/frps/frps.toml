@@ -1,0 +1,10 @@
+bindAddr = "0.0.0.0"
+bindPort = 7000
+
+webServer.addr = "0.0.0.0"
+webServer.port = 7500
+webServer.user = "admin"
+webServer.password = "your-password"
+
+vhostHTTPPort = 8009
+vhostHTTPSPort = 8010
