@@ -1,0 +1,62 @@
+---
+services:
+  # ----------------------------------------
+  # 🎬 Jellyfin - Media Server
+  # ----------------------------------------
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    network_mode: host # Required for DLNA, hardware acceleration, and LAN discovery
+
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - ./media:/media # Shared media volume for Movies and TV Shows
+
+    environment:
+      - TZ=Asia/Kolkata
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.ghost.meanii.dev
+
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 🧲 qBittorrent - Torrent Client
+  # ----------------------------------------
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+
+    ports:
+      - "8080:8080" # Web UI
+      - "6881:6881" # Torrent TCP
+      - "6881:6881/udp" # Torrent UDP
+
+    environment:
+      - PUID=1000 # Replace with your user ID (run `id` in shell)
+      - PGID=1000 # Replace with your group ID
+      - TZ=Asia/Kolkata
+      - WEBUI_PORT=8080
+
+    volumes:
+      - ./qbittorrent/config:/config
+      - ./media/Movies:/downloads/movies # Torrents labeled 'movies' go here
+      - ./media/TV\ Shows:/downloads/shows # Torrents labeled 'shows' go here
+      - ./watch:/watch # Optional: auto-load `.torrent` files dropped here
+
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 🤖 qBittorrentBot - Telegram Bot Controller
+  # github: https://github.com/ch3p4ll3/QBittorrentBot/
+  # ----------------------------------------
+  qbittorrent-bot:
+    image: ch3p4ll3/qbittorrent-bot:latest
+    container_name: qbittorrent-bot
+
+    depends_on:
+      - qbittorrent # Wait for qbittorrent to start before starting the bot
+
+    volumes:
+      - ./qbitbot:/app/config:rw # Bot config lives here (qbitbot/config.json)
+
+    restart: unless-stopped

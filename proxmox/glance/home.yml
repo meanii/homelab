@@ -1,0 +1,145 @@
+- name: Home
+  hide-desktop-navigation: true
+  center-vertically: true
+  columns:
+    - size: small
+      widgets:
+        - type: weather
+          units: metric
+          hour-format: 12h
+          location: Delhi, India
+
+        - type: custom-api
+          title: Random Fact
+          cache: 6h
+          url: https://uselessfacts.jsph.pl/api/v2/facts/random
+          template: |
+            <p class="size-h4 color-paragraph">{{ .JSON.String "text" }}</p>
+
+        - type: custom-api
+          title: Immich stats
+          cache: 1d
+          url: https://${IMMICH_URL}/api/server/statistics
+          headers:
+            x-api-key: ${IMMICH_API_KEY}
+            Accept: application/json
+          template: |
+            <div class="flex justify-between text-center">
+              <div>
+                  <div class="color-highlight size-h3">{{ .JSON.Int "photos" | formatNumber }}</div>
+                  <div class="size-h6">PHOTOS</div>
+              </div>
+              <div>
+                  <div class="color-highlight size-h3">{{ .JSON.Int "videos" | formatNumber }}</div>
+                  <div class="size-h6">VIDEOS</div>
+              </div>
+              <div>
+                  <div class="color-highlight size-h3">{{ div (.JSON.Int "usage" | toFloat) 1073741824 | toInt | formatNumber }}GB</div>
+                  <div class="size-h6">USAGE</div>
+              </div>
+            </div>
+
+        - type: to-do
+
+    - size: full
+      widgets:
+        - type: search
+          search-engine: duckduckgo
+          bangs:
+            - title: YouTube
+              shortcut: "!yt"
+              url: https://www.youtube.com/results?search_query={QUERY}
+
+        - type: monitor
+          cache: 1m
+          title: Services
+          sites:
+            - title: Jellyfin
+              url: https://jellyfin.ghost.meanii.dev
+              icon: si:jellyfin
+            - title: qBittorrent # only for Linux ISOs, of course
+              url: https://qbit.ghost.meanii.dev
+              icon: si:qbittorrent
+            - title: Immich
+              url: https://immich.ghost.meanii.dev
+              icon: si:immich
+            - title: AdGuard Home
+              url: https://dns.ghost.meanii.dev
+              icon: si:adguard
+            - title: Vaultwarden
+              url: https://vw.ghost.meanii.dev
+              icon: si:vaultwarden
+
+        - type: bookmarks
+          groups:
+            - title: Tools
+              links:
+                - title: CyberChef
+                  url: https://gchq.github.io/CyberChef/
+                - title: It-Tools
+                  url: https://it-tools.tech/
+                - title: Regex101
+                  url: https://regex101.com/
+                - title: JSON Formatter
+                  url: https://jsonformatter.org/
+                - title: Crontab Guru
+                  url: https://crontab.guru/
+
+            - title: Dev
+              links:
+                - title: Stack Overflow
+                  url: https://stackoverflow.com/
+                - title: GitHub
+                  url: https://github.com/
+                - title: CodePen
+                  url: https://codepen.io/
+                - title: JSFiddle
+                  url: https://jsfiddle.net/
+
+            - title: Security
+              links:
+                - title: Have I Been Pwned
+                  url: https://haveibeenpwned.com/
+                - title: Shodan
+                  url: https://www.shodan.io/
+                - title: VirusTotal
+                  url: https://www.virustotal.com/
+                - title: SSL Labs
+                  url: https://www.ssllabs.com/ssltest/
+
+            - title: Reference
+              links:
+                - title: MDN Web Docs
+                  url: https://developer.mozilla.org/
+                - title: DevDocs
+                  url: https://devdocs.io/
+                - title: TLDR Pages
+                  url: https://tldr.sh/
+                - title: ExplainShell
+                  url: https://explainshell.com/
+
+            - title: Utilities
+              links:
+                - title: Temp Mail
+                  url: https://temp-mail.org/
+                - title: Online UUID Generator
+                  url: https://www.uuidgenerator.net/
+                - title: Base64 Decode/Encode
+                  url: https://www.base64decode.org/
+                - title: Diff Checker
+                  url: https://www.diffchecker.com/
+
+    - size: small
+      widgets:
+        - type: calendar
+          first-day-of-week: monday
+        - type: hacker-news
+          limit: 15
+          collapse-after: 5
+        - type: rss
+          title: Golang News
+          limit: 15
+          collapse-after: 5
+          feeds:
+            - url: https://www.golangprojects.com/rss.xml
+              title: Golang Projects
