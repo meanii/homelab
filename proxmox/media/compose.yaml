@@ -32,6 +32,8 @@ services:
       - "6881:6881/udp" # Torrent UDP
 
     environment:
+      - PUID=1000 # Replace with your user ID (run `id` in shell)
+      - PGID=1000 # Replace with your group ID
       - TZ=Asia/Kolkata
       - WEBUI_PORT=8080
 
