@@ -48,7 +48,7 @@
             </div>
 
         - type: custom-api
-          cache: 1h
+          cache: 15m
           title: Internet Speed
           title-url: ${SPEEDTEST_URL}
           url: ${SPEEDTEST_URL}/api/v1/results/latest
