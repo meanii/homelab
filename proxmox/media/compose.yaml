@@ -32,16 +32,16 @@ services:
       - "6881:6881/udp" # Torrent UDP
 
     environment:
-      - PUID=1000 # Replace with your user ID (run `id` in shell)
-      - PGID=1000 # Replace with your group ID
       - TZ=Asia/Kolkata
       - WEBUI_PORT=8080
 
     volumes:
       - ./qbittorrent/config:/config
-      - ./media/Movies:/downloads/movies # Torrents labeled 'movies' go here
-      - ./media/TV\ Shows:/downloads/shows # Torrents labeled 'shows' go here
-      - ./watch:/watch # Optional: auto-load `.torrent` files dropped here
+      - ./media/downloads:/downloads # Torrents labeled 'downloads' go here
+      - ./media/downloads/completed/movies:/downloads/completed/movies # Torrents labeled 'movies' go here
+      - ./media/downloads/completed/shows:/downloads/completed/shows # Torrents labeled 'shows' go here
+      - ./media/downloads/incomplete:/downloads/incomplete # Torrents labeled 'incomplete' go here
+      - ./media/downloads/torrents:/downloads/torrents # Torrents labeled 'torrents' go here
 
     restart: unless-stopped
 
