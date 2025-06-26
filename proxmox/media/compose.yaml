@@ -6,17 +6,14 @@ services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
-    network_mode: host # Required for DLNA, hardware acceleration, and LAN discovery
-
+    network_mode: host
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
-      - ./media:/media # Shared media volume for Movies and TV Shows
-
+      - ./media:/media
     environment:
       - TZ=Asia/Kolkata
       - JELLYFIN_PublishedServerUrl=https://jellyfin.ghost.meanii.dev
-
     restart: unless-stopped
 
   # ----------------------------------------
@@ -25,40 +22,94 @@ services:
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
-
     ports:
-      - "8080:8080" # Web UI
-      - "6881:6881" # Torrent TCP
-      - "6881:6881/udp" # Torrent UDP
-
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
     environment:
-      - PUID=1000 # Replace with your user ID (run `id` in shell)
-      - PGID=1000 # Replace with your group ID
+      - PUID=1000
+      - PGID=1000
       - TZ=Asia/Kolkata
       - WEBUI_PORT=8080
-
     volumes:
       - ./qbittorrent/config:/config
-      - ./media/downloads:/downloads # Torrents labeled 'downloads' go here
-      - ./media/downloads/completed/movies:/downloads/completed/movies # Torrents labeled 'movies' go here
-      - ./media/downloads/completed/shows:/downloads/completed/shows # Torrents labeled 'shows' go here
-      - ./media/downloads/incomplete:/downloads/incomplete # Torrents labeled 'incomplete' go here
-      - ./media/downloads/torrents:/downloads/torrents # Torrents labeled 'torrents' go here
-
+      - ./downloads:/downloads
     restart: unless-stopped
 
   # ----------------------------------------
   # 🤖 qBittorrentBot - Telegram Bot Controller
-  # github: https://github.com/ch3p4ll3/QBittorrentBot/
   # ----------------------------------------
   qbittorrent-bot:
     image: ch3p4ll3/qbittorrent-bot:latest
     container_name: qbittorrent-bot
-
     depends_on:
-      - qbittorrent # Wait for qbittorrent to start before starting the bot
-
+      - qbittorrent
     volumes:
-      - ./qbitbot:/app/config:rw # Bot config lives here (qbitbot/config.json)
+      - ./qbitbot:/app/config:rw
 
+  # ----------------------------------------
+  # 🎞️ Radarr - Movie Management
+  # ----------------------------------------
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./radarr/config:/config
+      - ./downloads:/downloads
+      - ./media/movies:/movies
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 📺 Sonarr - TV Series Management
+  # ----------------------------------------
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./sonarr/config:/config
+      - ./downloads:/downloads
+      - ./media/shows:/tv
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 🧭 Prowlarr - Indexer Manager
+  # ----------------------------------------
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./prowlarr/config:/config
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 🎟️ Jellyseerr - Media Request Service
+  # ----------------------------------------
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    ports:
+      - "5055:5055"
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./jellyseerr/config:/app/config
     restart: unless-stopped
