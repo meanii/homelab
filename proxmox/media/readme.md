@@ -12,7 +12,7 @@ This project sets up a self-hosted media server stack using Docker Compose with 
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```bash
 project-root/
@@ -39,7 +39,7 @@ project-root/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone this Repository
 
@@ -79,7 +79,7 @@ docker compose up -d
 
 ---
 
-## 🔗 Web Interfaces
+## Web Interfaces
 
 | Service            | URL                                                     |
 | ------------------ | ------------------------------------------------------- |
@@ -93,7 +93,7 @@ docker compose up -d
 
 ---
 
-## 🔄 Automation Notes
+## Automation Notes
 
 - **Radarr** and **Sonarr** monitor and manage content in the `media/` directory.
 - **Prowlarr** centralizes indexer configuration and integrates with Radarr/Sonarr.
@@ -102,7 +102,7 @@ docker compose up -d
 
 ---
 
-## ✅ Permissions Tips
+## Permissions Tips
 
 Ensure Docker has permission to access all folders:
 
@@ -114,7 +114,7 @@ Also verify UID/GID in the environment match your host user (e.g. `PUID=1000`, `
 
 ---
 
-## 📌 Notes
+## Notes
 
 - Jellyfin uses `network_mode: host` for performance and discovery. Ensure port 8096 is open.
 - You can expose Jellyfin remotely via HTTPS using a reverse proxy or by setting `JELLYFIN_PublishedServerUrl`.
