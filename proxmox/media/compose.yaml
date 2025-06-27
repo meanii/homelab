@@ -1,115 +1,133 @@
 ---
 services:
-  # ----------------------------------------
-  # 🎬 Jellyfin - Media Server
-  # ----------------------------------------
-  jellyfin:
-    image: jellyfin/jellyfin:latest
-    container_name: jellyfin
-    network_mode: host
-    volumes:
-      - ./jellyfin/config:/config
-      - ./jellyfin/cache:/cache
-      - ./media:/media
-    environment:
-      - TZ=Asia/Kolkata
-      - JELLYFIN_PublishedServerUrl=https://jellyfin.ghost.meanii.dev
-    restart: unless-stopped
+    # ----------------------------------------
+    # 🎬 Jellyfin - Media Server
+    # ----------------------------------------
+    jellyfin:
+        image: jellyfin/jellyfin:latest
+        container_name: jellyfin
+        network_mode: host
+        volumes:
+            - ./jellyfin/config:/config
+            - ./jellyfin/cache:/cache
+            - ./media:/media
+        environment:
+            - TZ=Asia/Kolkata
+            - JELLYFIN_PublishedServerUrl=https://jellyfin.ghost.meanii.dev
+        restart: unless-stopped
 
-  # ----------------------------------------
-  # 🧲 qBittorrent - Torrent Client
-  # ----------------------------------------
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    ports:
-      - "8080:8080"
-      - "6881:6881"
-      - "6881:6881/udp"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Kolkata
-      - WEBUI_PORT=8080
-    volumes:
-      - ./qbittorrent/config:/config
-      - ./downloads:/downloads
-    restart: unless-stopped
+    # ----------------------------------------
+    # 🧲 qBittorrent - Torrent Client
+    # ----------------------------------------
+    qbittorrent:
+        image: lscr.io/linuxserver/qbittorrent:latest
+        container_name: qbittorrent
+        ports:
+            - "8080:8080"
+            - "6881:6881"
+            - "6881:6881/udp"
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Kolkata
+            - WEBUI_PORT=8080
+        volumes:
+            - ./qbittorrent/config:/config
+            - ./downloads:/downloads
+        restart: unless-stopped
 
-  # ----------------------------------------
-  # 🤖 qBittorrentBot - Telegram Bot Controller
-  # ----------------------------------------
-  qbittorrent-bot:
-    image: ch3p4ll3/qbittorrent-bot:latest
-    container_name: qbittorrent-bot
-    depends_on:
-      - qbittorrent
-    volumes:
-      - ./qbitbot:/app/config:rw
+    # ----------------------------------------
+    # 🤖 qBittorrentBot - Telegram Bot Controller
+    # ----------------------------------------
+    qbittorrent-bot:
+        image: ch3p4ll3/qbittorrent-bot:latest
+        container_name: qbittorrent-bot
+        depends_on:
+            - qbittorrent
+        volumes:
+            - ./qbitbot:/app/config:rw
 
-  # ----------------------------------------
-  # 🎞️ Radarr - Movie Management
-  # ----------------------------------------
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    ports:
-      - "7878:7878"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Kolkata
-    volumes:
-      - ./radarr/config:/config
-      - ./downloads:/downloads
-      - ./media/movies:/movies
-    restart: unless-stopped
+    # ----------------------------------------
+    # 🎞️ Radarr - Movie Management
+    # ----------------------------------------
+    radarr:
+        image: lscr.io/linuxserver/radarr:latest
+        container_name: radarr
+        ports:
+            - "7878:7878"
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Kolkata
+        volumes:
+            - ./radarr/config:/config
+            - ./downloads:/downloads
+            - ./media/movies:/movies
+        restart: unless-stopped
 
-  # ----------------------------------------
-  # 📺 Sonarr - TV Series Management
-  # ----------------------------------------
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    ports:
-      - "8989:8989"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Kolkata
-    volumes:
-      - ./sonarr/config:/config
-      - ./downloads:/downloads
-      - ./media/shows:/tv
-    restart: unless-stopped
+    # ----------------------------------------
+    # 📺 Sonarr - TV Series Management
+    # ----------------------------------------
+    sonarr:
+        image: lscr.io/linuxserver/sonarr:latest
+        container_name: sonarr
+        ports:
+            - "8989:8989"
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Kolkata
+        volumes:
+            - ./sonarr/config:/config
+            - ./downloads:/downloads
+            - ./media/shows:/tv
+        restart: unless-stopped
 
-  # ----------------------------------------
-  # 🧭 Prowlarr - Indexer Manager
-  # ----------------------------------------
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    ports:
-      - "9696:9696"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Kolkata
-    volumes:
-      - ./prowlarr/config:/config
-    restart: unless-stopped
+    # ----------------------------------------
+    # 🧭 Prowlarr - Indexer Manager
+    # ----------------------------------------
+    prowlarr:
+        image: lscr.io/linuxserver/prowlarr:latest
+        container_name: prowlarr
+        ports:
+            - "9696:9696"
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Kolkata
+        volumes:
+            - ./prowlarr/config:/config
+        restart: unless-stopped
 
-  # ----------------------------------------
-  # 🎟️ Jellyseerr - Media Request Service
-  # ----------------------------------------
-  jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
-    ports:
-      - "5055:5055"
-    environment:
-      - LOG_LEVEL=debug
-      - TZ=Asia/Kolkata
-    volumes:
-      - ./jellyseerr/config:/app/config
-    restart: unless-stopped
+    # ----------------------------------------
+    # 🎟️ Jellyseerr - Media Request Service
+    # ----------------------------------------
+    jellyseerr:
+        image: fallenbagel/jellyseerr:latest
+        container_name: jellyseerr
+        ports:
+            - "5055:5055"
+        environment:
+            - LOG_LEVEL=debug
+            - TZ=Asia/Kolkata
+        volumes:
+            - ./jellyseerr/config:/app/config
+        restart: unless-stopped
+
+    # ----------------------------------------
+    # 🈂️ Bazarr - Subtitle Management
+    # ----------------------------------------
+    bazarr:
+        image: lscr.io/linuxserver/bazarr:latest
+        container_name: bazarr
+        ports:
+            - "6767:6767"
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Kolkata
+        volumes:
+            - ./bazarr/config:/config
+            - ./media/movies:/movies
+            - ./media/shows:/tv
+        restart: unless-stopped
