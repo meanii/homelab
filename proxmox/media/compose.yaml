@@ -1,5 +1,4 @@
-version: "3.8"
-
+---
 services:
   # 🎬 Jellyfin - Media Server
   jellyfin:
@@ -116,6 +115,22 @@ services:
       - ./media/movies:/movies # Movies for subtitle matching
       - ./media/shows:/tv # Shows for subtitle matching
     restart: unless-stopped
+
+  # 🧹 Cleanuparr - Automated Cleanup for qBittorrent, Sonarr, Radarr
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
+    restart: unless-stopped
+    ports:
+      - "11011:11011" # Web UI/API port (adjust if needed)
+    environment:
+      - PORT=11011
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./cleanuparr/config:/config # Cleanuparr config directory
+
 
   # 🔄 FileFlows Server - Transcoding/Automation
   fileflows-server:
