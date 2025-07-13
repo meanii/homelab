@@ -4,14 +4,15 @@ services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
-    network_mode: host # Use host networking for DLNA and better performance
+    ports:
+	- "8006:8006"
     volumes:
       - ./jellyfin/config:/config # Jellyfin config directory
       - ./jellyfin/cache:/cache # Transcoding and image cache
       - ./media:/media # Media library (movies, shows, etc.)
     environment:
       - TZ=Asia/Kolkata
-      - JELLYFIN_PublishedServerUrl=https://jellyfin.ghost.meanii.dev
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.home.meanii.dev
     restart: unless-stopped
 
   # 🧲 qBittorrent - Torrent Client
