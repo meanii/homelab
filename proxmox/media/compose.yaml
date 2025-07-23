@@ -5,7 +5,7 @@ services:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
     ports:
-	- "8006:8006"
+      - "8006:8006"
     volumes:
       - ./jellyfin/config:/config # Jellyfin config directory
       - ./jellyfin/cache:/cache # Transcoding and image cache
