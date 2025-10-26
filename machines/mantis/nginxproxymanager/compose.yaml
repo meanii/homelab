@@ -24,7 +24,7 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 
-    # frp fast reverse proxy to help expose a local services behind a NAT or firewall to the internet.
+  # frp fast reverse proxy to help expose a local services behind a NAT or firewall to the internet.
   frpc:
     image: ghcr.io/fatedier/frpc:v0.58.1
     container_name: frpc

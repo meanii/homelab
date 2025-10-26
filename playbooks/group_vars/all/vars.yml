@@ -1,9 +1,0 @@
-username: meanii
-packages:
-  - vim 
-  - git
-  - curl
-  - neofetch
-  - htop
-  - tmux
-  - speedtest-cli
