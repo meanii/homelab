@@ -1,0 +1,94 @@
+*.ghost.aniicrite.dev {
+    tls {
+	dns cloudflare {env.CF_API_TOKEN}
+	resolvers 1.1.1.1
+    }
+    
+    reverse_proxy https://127.0.0.1:8010 {
+        # Use proper HTTPS transport with SNI configuration
+        transport http {
+            tls
+            tls_insecure_skip_verify
+            tls_server_name {http.request.host}
+        }
+        header_up Host {http.request.host}  # Preserve original host header
+    }
+}
+
+frp.aniicrite.dev {
+    reverse_proxy http://127.0.0.1:7500
+}
+
+
+
+*.home.aniicrite.dev {
+    tls {
+	dns cloudflare {env.CF_API_TOKEN}
+	resolvers 1.1.1.1
+    }
+    
+    reverse_proxy https://127.0.0.1:8010 {
+        transport http {
+            tls
+            tls_insecure_skip_verify
+            tls_server_name {http.request.host}
+        }
+        header_up Host {http.request.host}
+    }
+}
+
+netbird.aniicrite.dev {
+    # Native gRPC (needs HTTP/2 cleartext to backend)
+    @grpc header Content-Type application/grpc*
+    reverse_proxy @grpc h2c://127.0.0.1:8081
+
+    # Combined server paths (relay, signal, management, OAuth2)
+    @backend path /relay* /ws-proxy/* /api/* /oauth2/*
+    reverse_proxy @backend 127.0.0.1:8081
+
+    # Dashboard (everything else)
+    reverse_proxy /* 127.0.0.1:8080
+}
+
+aniicrite.dev {
+	reverse_proxy http://127.0.0.1:8091
+}
+umbra.aniicrite.dev {
+	reverse_proxy http://127.0.0.1:8092
+}
+
+vault.aniicrite.dev {
+	reverse_proxy http://127.0.0.1:8093
+}
+
+backpulse.aniicrite.dev {
+	encode zstd gzip
+
+	# Logged-in dashboard: backend owns / only when the session cookie is
+	# present; everyone else gets the static portal. Auth + dashboard paths
+	# always go to the backend (its redirects are root-absolute by design).
+	@session {
+		path /
+		header Cookie *backpulse_session=*
+	}
+	handle @session {
+		reverse_proxy 127.0.0.1:8095
+	}
+	@app {
+		path /login /login/ /logout /logout/ /signup /signup/ /auth/* /verify/* /account/* /checks/* /channels* /settings* /static/*
+	}
+	handle @app {
+		reverse_proxy 127.0.0.1:8095
+	}
+	@api {
+		path /commitments /commitments/ /commitments/* /healthz /ping/* /api/*
+	}
+	handle @api {
+		reverse_proxy 127.0.0.1:8095
+	}
+
+	handle {
+		root * /var/www/backpulse
+		file_server
+	}
+}

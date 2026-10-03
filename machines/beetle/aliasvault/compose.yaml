@@ -1,0 +1,17 @@
+services:
+  aliasvault:
+    image: ghcr.io/aliasvault/aliasvault:latest
+    container_name: aliasvault
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8093:80
+    volumes:
+      - ./database:/database
+      - ./logs:/logs
+      - type: bind
+        source: ./secrets
+        target: /secrets
+      - ./certificates:/certificates
+    environment:
+      FORCE_HTTPS_REDIRECT: false
+      PUBLIC_REGISTRATION_ENABLED: true

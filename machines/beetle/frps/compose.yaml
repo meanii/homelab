@@ -1,13 +1,17 @@
+---
 services:
   frps:
-    image: ghcr.io/fatedier/frps:v0.58.1
+    image: ghcr.io/fatedier/frps:v0.71.0
     container_name: frps
     restart: unless-stopped
+    env_file: .env
     ports:
-      - "7000:7000" # frp communication port
-      - "7500:7500" # dashboard port (optional)
-      - "8009:8009" # HTTP
-      - "8010:8010" # HTTPS
+      - "7000:7000"      # frp communication port
+      - "127.0.0.1:7500:7500"      # dashboard port (optional)
+      - "127.0.0.1:8009:8009"      # HTTP
+      - "127.0.0.1:8010:8010"      # HTTPS
+      - "6000:6000"
     volumes:
       - ./frps.toml:/etc/frps.toml
     command: -c /etc/frps.toml
+
