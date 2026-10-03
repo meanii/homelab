@@ -1,2 +1,41 @@
 dumps
+
+# Secrets stay on the hosts. Commit *.sample / *.example / *.template copies
+# with placeholder values instead.
+.env
+.env.*
 *.env
+!.env.sample
+!.env.example
+!*.env.sample
+!*.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+*.kdbx
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+.htpasswd
+.netrc
+.pgpass
+rclone.conf
+acme.json
+kubeconfig
+credentials
+credentials.json
+
+# Terraform / AWS scratch state for temporary AWS work
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.aws/
+
+# App secret files (Recyclarr API keys, etc.)
+secrets.yml
+secrets.yaml

@@ -1,0 +1,59 @@
+title = "homelab secret scan"
+
+# Start from the upstream gitleaks rule set (AWS keys, private keys, GitHub
+# tokens, Telegram bot tokens, ...) and add rules for this repo.
+[extend]
+useDefault = true
+
+# Public IPv4 addresses reveal the Hetzner/Vultr/AWS hosts. Private, loopback,
+# CGNAT/Tailscale, documentation and well-known public DNS resolvers are allowed.
+[[rules]]
+id = "public-ipv4"
+description = "Public IPv4 address"
+regex = '''\b((?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})\b'''
+secretGroup = 1
+keywords = ["."]
+[[rules.allowlists]]
+regexes = [
+  '''^0\.''',
+  '''^10\.''',
+  '''^127\.''',
+  '''^169\.254\.''',
+  '''^172\.(1[6-9]|2\d|3[01])\.''',
+  '''^192\.168\.''',
+  '''^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.''',
+  '''^(22[4-9]|2[3-5]\d)\.''',
+  '''^192\.0\.2\.''',
+  '''^198\.51\.100\.''',
+  '''^203\.0\.113\.''',
+  '''^(1\.1\.1\.1|1\.0\.0\.1|8\.8\.8\.8|8\.8\.4\.4|9\.9\.9\.9|9\.9\.9\.11|149\.112\.112\.112)$''',
+]
+
+# Literal credentials in compose/env/toml/yaml/json. Values that are variable
+# references or obvious placeholders pass; templates are exempt because they
+# hold fake values by design (the default rules still scan them).
+[[rules]]
+id = "literal-credential"
+description = "Credential-like key with a literal value"
+regex = '''(?i)["']?[\w.-]*(?:password|passwd|secret|token|api[_-]?key|api[_-]?hash|private[_-]?key|access[_-]?key)[\w.-]*["']?[ \t]*[:=][ \t]*["']?([^\s"'#,]{4,})'''
+secretGroup = 1
+keywords = ["pass", "secret", "token", "key", "hash"]
+[[rules.allowlists]]
+paths = ['''(?i)(\.(sample|example|template)|(^|/)(sample|example)\.env)$''']
+[[rules.allowlists]]
+regexes = [
+  '''^\$''',
+  '''^\{\{''',
+  '''^!secret$''',
+  '''^<.*>$''',
+  '''(?i)^(your[-_].*|change[-_]?me.*|example.*|x{3,}|\*{3,}|redacted|placeholder|none|null|true|false)$''',
+]
+
+# Files that hold secrets by nature. Matching is on path, so adding the file is
+# enough to block the commit. Sample/example/template copies are allowed.
+[[rules]]
+id = "sensitive-file"
+description = "Secret-bearing file type"
+path = '''(?i)(^|/)(\.env(\.[^/]+)?|[^/]+\.env|id_(rsa|dsa|ecdsa|ed25519)|[^/]+\.(pem|key|p12|pfx|ppk|kdbx|tfvars|tfstate|tfstate\.backup|sqlite|sqlite3|db)|credentials|credentials\.json|kubeconfig|\.htpasswd|\.netrc|\.pgpass|rclone\.conf|acme\.json)$'''
+[[rules.allowlists]]
+paths = ['''(?i)(\.(sample|example|template)|(^|/)(sample|example)\.env)$''']

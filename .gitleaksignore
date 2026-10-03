@@ -1,0 +1,23 @@
+# Findings in old commits, reviewed 2026-09-29. None is a live credential.
+# New findings must be fixed, not added here.
+
+# dnscrypt-proxy upstream sample config: minisign public keys of resolver
+# lists, a public DNS resolver IP in a comment, and a comment example token.
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:684
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:693
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:702
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:708
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:716
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:generic-api-key:726
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:literal-credential:294
+20a7b69a334c764d51df8ad9509076193ac64a3b:docker/pi-hole/dnscrypt-proxy/dnscrypt-proxy.toml:public-ipv4:242
+
+# Shell snippet and a Kubernetes TLS secret name, not secret values.
+54de6129433eaee5a47e253e5049ca2493b09a0d:proxmox/speedtest-tracker/readme.md:literal-credential:5
+9cc61e5a5261ee9e36e12d7976a2eb3d499bcc81:kubernetes/uptime-kube/uptime-kuma.yaml:literal-credential:77
+
+# Ansible inventory with the public IP of a DigitalOcean droplet that is not in
+# the current fleet, and an Ansible option value. The IP stays in history;
+# purging it needs a history rewrite.
+cd687f5c4b75fb857c31c0eacca6cee0ba3133c6:playbooks/hosts:public-ipv4:5
+cd687f5c4b75fb857c31c0eacca6cee0ba3133c6:playbooks/roles/system/tasks/user.yml:literal-credential:12

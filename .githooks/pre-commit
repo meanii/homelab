@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Blocks commits whose staged changes contain secrets, public IPs or
+# secret-bearing files. Rules: .gitleaks.toml. Reviewed history: .gitleaksignore.
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+. "$root/.githooks/require-gitleaks.sh"
+
+if ! gitleaks git --pre-commit --staged --redact --no-banner -v --platform github \
+	--config "$root/.gitleaks.toml" --gitleaks-ignore-path "$root" "$root"; then
+	echo >&2
+	echo "pre-commit: blocked. Replace the value with a placeholder (<TOKEN>, \${VAR}) or move it to a gitignored .env on the host." >&2
+	exit 1
+fi

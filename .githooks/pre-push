@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Last gate before GitHub: scans every commit that the push would send.
+# Catches commits made with --no-verify or on a clone without the hooks.
+set -euo pipefail
+
+remote=$1
+root=$(git rev-parse --show-toplevel)
+. "$root/.githooks/require-gitleaks.sh"
+
+status=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+	# Branch deletion: nothing is sent.
+	[[ $local_sha =~ ^0+$ ]] && continue
+
+	if [[ $remote_sha =~ ^0+$ ]] || ! git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+		# New branch, or remote tip unknown locally: scan everything the remote
+		# does not have yet.
+		range="$local_sha --not --remotes=$remote"
+	else
+		range="$remote_sha..$local_sha"
+	fi
+
+	echo "pre-push: scanning $local_ref -> $remote_ref" >&2
+	if ! gitleaks git --redact --no-banner -v --platform github --log-opts="$range" \
+		--config "$root/.gitleaks.toml" --gitleaks-ignore-path "$root" "$root"; then
+		status=1
+	fi
+done
+
+if ((status != 0)); then
+	echo >&2
+	echo "pre-push: blocked. Fix the commit(s) above (git commit --amend / git rebase -i) and push again." >&2
+fi
+exit "$status"
