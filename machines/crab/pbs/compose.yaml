@@ -1,0 +1,20 @@
+name: pbs
+services:
+  pbs:
+    image: ayufan/proxmox-backup-server:v4.2.0-1
+    container_name: pbs
+    hostname: crab-pbs
+    ports:
+      - 8007:8007
+    mem_limit: 2G
+    environment:
+      TZ: Asia/Kolkata
+    volumes:
+      - ${PBS_STATE:-/home/anil/pbs}/etc:/etc/proxmox-backup
+      - ${PBS_STATE:-/home/anil/pbs}/logs:/var/log/proxmox-backup
+      - ${PBS_STATE:-/home/anil/pbs}/lib:/var/lib/proxmox-backup
+      - /mnt/data/pbs:/datastore/hdd
+    tmpfs:
+      - /run
+    restart: unless-stopped
+    stop_signal: SIGHUP
