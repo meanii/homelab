@@ -1,0 +1,10 @@
+# /etc/pve/firewall/117.fw  (CT 117, arr). Filters net0 (vmbr0) only; net1 (vmbr1, 10.10.10.x) has no firewall flag.
+[OPTIONS]
+enable: 1
+policy_in: DROP
+
+[RULES]
+GROUP base
+IN ACCEPT -source +home -p tcp -dport 8080,9696,8989,7878,6767,5055 -log nolog
+IN ACCEPT -p tcp -dport 6881 -log nolog
+IN ACCEPT -p udp -dport 6881 -log nolog

@@ -1,0 +1,10 @@
+# /etc/pve/firewall/103.fw  (CT 103, adguard). Filters net0 (vmbr0) only; net1 (vmbr1, 10.10.10.x) has no firewall flag.
+[OPTIONS]
+enable: 1
+policy_in: DROP
+
+[RULES]
+GROUP base
+IN ACCEPT -p udp -dport 53 -log nolog
+IN ACCEPT -p tcp -dport 53 -log nolog
+IN ACCEPT -source +home -p tcp -dport 80 -log nolog

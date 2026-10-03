@@ -1,0 +1,8 @@
+# /etc/pve/firewall/102.fw  (CT 102, hermes agent). Filters net0 (vmbr0) only; net1 (vmbr1, 10.10.10.x) has no firewall flag.
+[OPTIONS]
+enable: 1
+policy_in: DROP
+
+[RULES]
+GROUP base
+IN ACCEPT -source +home -p tcp -dport 8089 -log nolog

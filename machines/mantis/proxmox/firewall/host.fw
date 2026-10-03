@@ -1,0 +1,9 @@
+# /etc/pve/nodes/home/host.fw  (Proxmox host "home")
+[OPTIONS]
+enable: 1
+
+[RULES]
+IN ACCEPT -source +home -p tcp -dport 22,8006 -log nolog
+IN ACCEPT -source +tailnet -p tcp -dport 22,8006 -log nolog
+IN ACCEPT -p udp -dport 41641 -log nolog # tailscale direct connections
+IN Ping(ACCEPT) -log nolog

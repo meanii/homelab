@@ -1,0 +1,15 @@
+# /etc/pve/firewall/cluster.fw
+[OPTIONS]
+enable: 1
+policy_in: DROP
+policy_out: ACCEPT
+
+[IPSET home] # both home subnets (router serves 192.168.0.x and 192.168.1.x)
+192.168.0.0/23
+
+[IPSET tailnet]
+100.64.0.0/10
+
+[group base] # every container: SSH from home, ping
+IN ACCEPT -source +home -p tcp -dport 22 -log nolog
+IN Ping(ACCEPT) -log nolog

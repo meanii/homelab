@@ -1,0 +1,8 @@
+# /etc/pve/firewall/100.fw  (CT 100, immich). Filters net0 (vmbr0) only; net1 (vmbr1, 10.10.10.x) has no firewall flag.
+[OPTIONS]
+enable: 1
+policy_in: DROP
+
+[RULES]
+GROUP base
+IN ACCEPT -source +home -p tcp -dport 2283,8000 -log nolog
