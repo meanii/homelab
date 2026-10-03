@@ -1,0 +1,15 @@
+# /root/beszel/compose.yaml in CT 109 (beszel) on mantis.
+# Web UI: https://beszel.ghost.aniicrite.dev (via frp) and https://beszel.home.aniicrite.dev (LAN), both through NPM.
+services:
+  beszel:
+    image: henrygd/beszel:0.20.0
+    container_name: beszel
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      APP_URL: https://beszel.ghost.aniicrite.dev
+    # First admin login comes from .env (see .env.example); read only on the first start.
+    env_file: .env
+    volumes:
+      - ./beszel_data:/beszel_data

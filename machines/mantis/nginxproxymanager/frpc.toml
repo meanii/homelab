@@ -1,8 +1,24 @@
-serverAddr = "<tunnel-ip>"
+# /root/frpc.toml in CT 107 (nginxproxymanager). Copy of the live file.
+serverAddr = "<BEETLE_PUBLIC_IP>"
 serverPort = 7000
+auth.method = "token"
+auth.token = "{{ .Envs.FRP_AUTH_TOKEN }}"
 
 [[proxies]]
-name = "nginx-wildcard"
-type = "http"
-localPort = 80
-customDomains = ["*.example.com"]
+name = "ghost-wildcard"
+type = "https"
+localPort = 443
+customDomains = ["*.ghost.aniicrite.dev"]
+
+[[proxies]]
+name = "ssh"
+type = "tcp"
+localIP = "192.168.0.122"
+localPort = 22
+remotePort = 6000
+
+[[proxies]]
+name = "home-wildcard"
+type = "https"
+localPort = 443
+customDomains = ["*.home.aniicrite.dev"]

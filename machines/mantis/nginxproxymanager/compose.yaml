@@ -1,35 +1,33 @@
 ---
+# /root/compose.yaml in CT 107 (nginxproxymanager)
 services:
-  # nginx proxy manager
   nginxproxymanager:
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     ports:
-      # These ports are in format <host-port>:<container-port>
       - "80:80" # Public HTTP Port
       - "443:443" # Public HTTPS Port
       - "81:81" # Admin Web Port
-      # Add any other Stream port you want to expose
-      # - '21:21' # FTP
-
     environment:
-      # Uncomment this if you want to change the location of
-      # the SQLite DB file within the container
       DB_SQLITE_FILE: "/data/database.sqlite"
-
-      # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
-
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 
-  # frp fast reverse proxy to help expose a local services behind a NAT or firewall to the internet.
+  # tinyauth: forward-auth login in front of NPM hosts, backed by PocketID (CT 115)
+  tinyauth:
+    container_name: tinyauth
+    image: ghcr.io/steveiliop56/tinyauth:v3
+    restart: unless-stopped
+    env_file: .env # see .env.example
+
+  # frp client: tunnel to frps on beetle
   frpc:
-    image: ghcr.io/fatedier/frpc:v0.58.1
+    image: ghcr.io/fatedier/frpc:v0.71.0
     container_name: frpc
     restart: unless-stopped
+    env_file: .env # FRP_AUTH_TOKEN
     network_mode: "host" # Needed to access local services
     volumes:
-      - ./frpc.toml:/etc/frpc.toml
+      - ./frpc.toml:/etc/frpc.toml:ro
     command: -c /etc/frpc.toml

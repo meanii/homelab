@@ -1,0 +1,17 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DOMAIN: "https://vw.ghost.aniicrite.dev"
+      SSO_ENABLED: true
+      SSO_AUTHORITY: "https://accounts.google.com"
+      SSO_AUTHORIZE_EXTRA_PARAMS: "access_type=offline&prompt=consent"
+      SSO_CLIENT_ID: "${SSO_CLIENT_ID}"
+      SSO_CLIENT_SECRET: "${SSO_CLIENT_SECRET}"
+      SSO_EMAIL_DOMAIN_HINTS: "aniicrite.dev"
+    volumes:
+      - ./vw-data/:/data/
+    ports:
+      - 8004:80

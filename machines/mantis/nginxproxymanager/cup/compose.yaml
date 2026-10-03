@@ -1,0 +1,13 @@
+# /root/.cup/compose.yaml in CT 107: container image update checker, UI on :8000
+services:
+  cup:
+    image: ghcr.io/sergi0g/cup:latest
+    container_name: cup
+    restart: unless-stopped
+    command: serve
+    ports:
+      - 8000:8000
+    environment:
+      - CUP_AGENT=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
