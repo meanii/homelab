@@ -1,0 +1,47 @@
+# Decluttarr: removes downloads that never finish, blocklists the release in
+# Sonarr/Radarr and lets them search for another one. Timer 10 min, so
+# 3 strikes = 30 min, 6 strikes = 1 h.
+general:
+  log_level: INFO
+  test_run: false
+  timer: 10
+  public_tracker_handling: remove
+
+job_defaults:
+  max_strikes: 3
+
+jobs:
+  remove_failed_downloads:
+  remove_failed_imports:
+    message_patterns:
+      - "*Found potentially dangerous file with extension*"
+      - "Invalid video file*"
+      - "No files found are eligible for import*"
+  remove_metadata_missing:
+    max_strikes: 3
+  remove_stalled:
+    max_strikes: 3
+  remove_slow:
+    min_speed: 50
+    max_strikes: 6
+  remove_bad_files:
+  remove_missing_files:
+
+instances:
+  sonarr:
+    - base_url: "http://sonarr:8989"
+      api_key: "<VALUE>"
+  radarr:
+    - base_url: "http://radarr:7878"
+      api_key: "<VALUE>"
+
+download_clients:
+  qbittorrent:
+    - base_url: "http://qbittorrent:8080"
+      username: "<VALUE>"
+      password: "<VALUE>"
+      name: "qBittorrent"
+    - base_url: "http://qbittorrent:8080"
+      username: "<VALUE>"
+      password: "<VALUE>"
+      name: "qBittorrent-anime"

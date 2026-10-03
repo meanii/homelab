@@ -1,0 +1,22 @@
+# /root/jellyfin/compose.yaml in CT 116 (jellyfin) on mantis.
+# Web UI: https://jellyfin.home.aniicrite.dev (LAN) and https://jellyfin.ghost.aniicrite.dev (internet), both through NPM.
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:12.1
+    container_name: jellyfin
+    user: 1000:1000
+    group_add:
+      - "44"
+      - "104"
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - "8096:8096"
+    environment:
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config:/config
+      - /scratch/cache:/cache
+      - /scratch/transcodes:/scratch/transcodes
+      - /data:/data
+    restart: unless-stopped

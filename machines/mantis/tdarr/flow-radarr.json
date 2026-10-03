@@ -1,0 +1,649 @@
+{
+  "name": "Mantis HEVC QSV (radarr)",
+  "description": "Pre-transcode to HEVC 10-bit with QuickSync (hevc_qsv, preset slow). Skips HEVC/AV1 at or below 6 Mbps, HDR/Dolby Vision, and above-1080p sources. Keeps English, Hindi and native audio (adds AAC stereo when missing) and matching text subtitles. Verifies size and duration, then notifies radarr and Jellyfin.",
+  "tags": "hevc,qsv,1080p",
+  "priority": 0,
+  "flowPlugins": [
+    {
+      "name": "Input File",
+      "sourceRepo": "Community",
+      "pluginName": "inputFile",
+      "version": "1.0.0",
+      "id": "2Ahnmp9zz",
+      "position": {
+        "x": 400,
+        "y": 60
+      }
+    },
+    {
+      "name": "Skip If HDR Or Dolby Vision",
+      "sourceRepo": "Community",
+      "pluginName": "checkHdr",
+      "version": "1.0.0",
+      "id": "Hr8W3EQHm",
+      "position": {
+        "x": 400,
+        "y": 180
+      }
+    },
+    {
+      "name": "Log Skipped HDR",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "rGx6pNtZ3",
+      "position": {
+        "x": 120,
+        "y": 300
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => { try { args.jobLog('Skipping: HDR or Dolby Vision video, leaving original in place'); } catch (e) {} return { outputFileObj: args.inputFileObj, outputNumber: 1, variables: args.variables }; };"
+      }
+    },
+    {
+      "name": "Route By Resolution",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoResolution",
+      "version": "1.0.0",
+      "id": "AyYj5fN7H",
+      "position": {
+        "x": 400,
+        "y": 300
+      }
+    },
+    {
+      "name": "Log Skipped Resolution",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "E4nmC0rcW",
+      "position": {
+        "x": 120,
+        "y": 420
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => { try { args.jobLog('Skipping: resolution above 1080p, leaving original in place'); } catch (e) {} return { outputFileObj: args.inputFileObj, outputNumber: 1, variables: args.variables }; };"
+      }
+    },
+    {
+      "name": "Check Codec HEVC 1080p",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "id": "aLcXKAG8O",
+      "position": {
+        "x": 400,
+        "y": 420
+      },
+      "inputsDB": {
+        "codec": "hevc"
+      }
+    },
+    {
+      "name": "Check Codec AV1 1080p",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "id": "BfT0LSc49",
+      "position": {
+        "x": 640,
+        "y": 540
+      },
+      "inputsDB": {
+        "codec": "av1"
+      }
+    },
+    {
+      "name": "Check Bitrate 6M",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "Ceq4jtFBf",
+      "position": {
+        "x": 400,
+        "y": 560
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => {\n  const jobLog = (m) => { try { args.jobLog(m); } catch (e) {} };\n  const num = (v) => { const n = Number(v); return (isFinite(n) && n > 0) ? n : 0; };\n  let mi = [];\n  try { const t = args.inputFileObj.mediaInfo.track; mi = Array.isArray(t) ? t : [t]; } catch (e) { mi = []; }\n  const ofType = (t) => mi.filter((x) => x && x['@type'] === t);\n  let br = 0, src = '';\n  try { const v = ofType('Video')[0] || {}; br = num(v.BitRate || v.BitRate_Nominal); if (br) src = 'mediainfo video track'; } catch (e) {}\n  if (!br) { try { const g = ofType('General')[0] || {}; br = num(g.OverallBitRate || g.BitRate); if (br) src = 'mediainfo overall'; } catch (e) {} }\n  if (!br) { try { br = num(args.inputFileObj.ffProbeData.format.bit_rate); if (br) src = 'ffprobe format'; } catch (e) {} }\n  if (!br) {\n    try {\n      const sz = num(args.inputFileObj.file_size);\n      const du = num(args.inputFileObj.ffProbeData.format.duration);\n      if (sz && du) { br = Math.round(sz * 8 / du); src = 'size/duration estimate'; }\n    } catch (e) {}\n  }\n  jobLog('Video bitrate: ' + (br ? Math.round(br / 1000) + ' kbps (' + src + ')' : 'unknown'));\n  let out = 2;\n  if (br > 0 && br <= 6000000) { out = 1; jobLog('At or below 6 Mbps, skipping transcode'); }\n  else { jobLog('Above 6 Mbps (or unknown), will transcode'); }\n  return { outputFileObj: args.inputFileObj, outputNumber: out, variables: args.variables };\n};"
+      }
+    },
+    {
+      "name": "Check Codec HEVC 720p",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "id": "lxkRxKgZl",
+      "position": {
+        "x": 400,
+        "y": 660
+      },
+      "inputsDB": {
+        "codec": "hevc"
+      }
+    },
+    {
+      "name": "Check Codec AV1 720p",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "id": "fyTye4Fyh",
+      "position": {
+        "x": 640,
+        "y": 780
+      },
+      "inputsDB": {
+        "codec": "av1"
+      }
+    },
+    {
+      "name": "Log Skipped Efficient",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "3V8VPrv9h",
+      "position": {
+        "x": 120,
+        "y": 660
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => { try { args.jobLog('Skipping: already HEVC/AV1 at or below 6 Mbps, no transcode needed'); } catch (e) {} return { outputFileObj: args.inputFileObj, outputNumber: 1, variables: args.variables }; };"
+      }
+    },
+    {
+      "name": "Replace Skipped Original",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "id": "E7ZdDatRs",
+      "position": {
+        "x": 120,
+        "y": 900
+      }
+    },
+    {
+      "name": "Log Verification Failed",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "SkonGlIk5",
+      "position": {
+        "x": 640,
+        "y": 1020
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => { try { args.jobLog('Verification failed (size or duration), keeping original'); } catch (e) {} return { outputFileObj: args.inputFileObj, outputNumber: 1, variables: args.variables }; };"
+      }
+    },
+    {
+      "name": "Begin FFmpeg Command",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandStart",
+      "version": "1.0.0",
+      "id": "xaXqwOhE4",
+      "position": {
+        "x": 400,
+        "y": 900
+      }
+    },
+    {
+      "name": "Map Audio And Subtitles",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "0HfgOGjsW",
+      "position": {
+        "x": 400,
+        "y": 1020
+      },
+      "inputsDB": {
+        "code": "\nmodule.exports = async (args) => {\n  const jobLog = (m) => { try { args.jobLog(m); } catch (e) {} };\n  const fc = args.variables && args.variables.ffmpegCommand;\n  if (!fc || !Array.isArray(fc.streams)) throw new Error('FFmpeg command not initialised');\n  const streams = fc.streams;\n  const langMap = { en: 'eng', eng: 'eng', english: 'eng', hi: 'hin', hin: 'hin', hindi: 'hin',\n    ja: 'jpn', jpn: 'jpn', japanese: 'jpn', fr: 'fra', fre: 'fra', fra: 'fra', french: 'fra' };\n  const normLang = (raw) => {\n    if (raw === undefined || raw === null) return '';\n    const l = String(raw).trim().toLowerCase();\n    if (langMap[l]) return langMap[l];\n    return l;\n  };\n  const ffLang = (s) => { try { return normLang(s.tags && s.tags.language); } catch (e) { return ''; } };\n  let miTracks = [];\n  try { const t = args.inputFileObj.mediaInfo.track; miTracks = Array.isArray(t) ? t : [t]; } catch (e) { miTracks = []; }\n  const miLang = (s) => {\n    try {\n      const type = s.codec_type === 'audio' ? 'Audio' : (s.codec_type === 'subtitle' ? 'Text' : 'Video');\n      const same = streams.filter((x) => x.codec_type === s.codec_type);\n      const cand = miTracks.filter((t) => t && t['@type'] === type);\n      const tr = cand[same.indexOf(s)];\n      if (!tr) return '';\n      const keys = ['Language', 'Language_String', 'Language_ISO639', 'language'];\n      for (let i = 0; i < keys.length; i += 1) { if (tr[keys[i]]) { const n = normLang(tr[keys[i]]); if (n) return n; } }\n    } catch (e) {}\n    return '';\n  };\n  const langOf = (s) => ffLang(s) || miLang(s);\n  const audios = streams.filter((s) => s.codec_type === 'audio');\n  const firstLang = audios.length > 0 ? langOf(audios[0]) : '';\n  const keepLangs = ['eng', 'hin'];\n  if (firstLang && firstLang !== 'und' && keepLangs.indexOf(firstLang) === -1) keepLangs.push(firstLang);\n  jobLog('Audio keep languages: ' + keepLangs.join(', ') + (firstLang ? ' (first audio track: ' + firstLang + ')' : ''));\n  const keptAudio = [];\n  audios.forEach((s) => {\n    const lang = langOf(s);\n    const keep = !lang || lang === 'und' || keepLangs.indexOf(lang) !== -1;\n    jobLog('Audio 0:' + s.index + ' codec=' + s.codec_name + ' ch=' + s.channels\n      + ' lang=' + (lang || 'unknown') + ' -> ' + (keep ? 'keep' : 'drop'));\n    if (keep) { keptAudio.push(s); } else { s.removed = true; }\n  });\n  const TEXT = ['subrip', 'ass', 'ssa', 'mov_text', 'webvtt', 'srt', 'ttml', 'stpp'];\n  const IMAGE = ['hdmv_pgs_subtitle', 'dvd_subtitle', 'dvb_subtitle', 'dvdsub', 'xsub', 'pgs'];\n  const subs = streams.filter((s) => s.codec_type === 'subtitle');\n  const textLangs = [];\n  subs.forEach((s) => {\n    const codec = String(s.codec_name || '').toLowerCase();\n    if (TEXT.indexOf(codec) !== -1) { const l = langOf(s); if (l && textLangs.indexOf(l) === -1) textLangs.push(l); }\n  });\n  subs.forEach((s) => {\n    const codec = String(s.codec_name || '').toLowerCase();\n    const lang = langOf(s);\n    const isImage = IMAGE.indexOf(codec) !== -1;\n    let keep = true;\n    if (isImage) {\n      keep = !(lang && lang !== 'und' && textLangs.indexOf(lang) !== -1);\n    } else {\n      keep = !lang || lang === 'und' || keepLangs.indexOf(lang) !== -1;\n    }\n    jobLog('Subtitle 0:' + s.index + ' codec=' + s.codec_name + ' lang=' + (lang || 'unknown')\n      + ' -> ' + (keep ? 'keep' : 'drop'));\n    if (!keep) s.removed = true;\n  });\n  const isAac = (s) => String(s.codec_name || '').toLowerCase().indexOf('aac') === 0;\n  const hasAacStereo = keptAudio.some((s) => isAac(s) && Number(s.channels) === 2);\n  if (!hasAacStereo && keptAudio.length > 0) {\n    const sorted = keptAudio.slice().sort((a, b) => ((Number(b.channels) || 0) - (Number(a.channels) || 0)) || (a.index - b.index));\n    const src = sorted[0];\n    const srcLang = langOf(src);\n    const aIdx = keptAudio.length;\n    jobLog('Kept audio tracks: ' + keptAudio.length + ', new AAC audio index: ' + aIdx);\n    const clone = JSON.parse(JSON.stringify(src));\n    clone.mapArgs = ['-map', '0:' + src.index];\n    clone.inputArgs = [];\n    clone.outputArgs = ['-c:a:' + aIdx, 'aac', '-ac:a:' + aIdx, '2', '-b:a:' + aIdx, '160k'];\n    if (srcLang && srcLang !== 'und') clone.outputArgs.push('-metadata:s:a:' + aIdx, 'language=' + srcLang);\n    clone.removed = false;\n    if (clone.disposition) { const d = {}; Object.keys(clone.disposition).forEach((k) => { d[k] = 0; }); clone.disposition = d; }\n    streams.push(clone);\n    jobLog('Added AAC stereo track from 0:' + src.index + ' (' + src.codec_name + ', ' + src.channels + 'ch, 160k)');\n  } else {\n    jobLog(hasAacStereo ? 'AAC stereo track already present' : 'No audio tracks to build AAC stereo from');\n  }\n  const video = streams.find((s) => s.codec_type === 'video');\n  const height = video ? Number(video.height) || 0 : 0;\n  const out = height > 720 ? 1 : 2;\n  jobLog('Video height ' + height + ' -> ' + (out === 1 ? '1080p path (quality 23)' : '720p/SD path (quality 21)'));\n  return { outputFileObj: args.inputFileObj, outputNumber: out, variables: args.variables };\n};\n"
+      }
+    },
+    {
+      "name": "Encode HEVC QSV 1080p",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetVideoEncoder",
+      "version": "1.0.0",
+      "id": "aAfPMYPoV",
+      "position": {
+        "x": 280,
+        "y": 1140
+      },
+      "inputsDB": {
+        "outputCodec": "hevc",
+        "ffmpegPresetEnabled": true,
+        "ffmpegPreset": "slow",
+        "ffmpegQualityEnabled": true,
+        "hardwareEncoding": true,
+        "hardwareType": "qsv",
+        "hardwareDecoding": true,
+        "forceEncoding": true,
+        "ffmpegQuality": "23"
+      }
+    },
+    {
+      "name": "Encode HEVC QSV 720p",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetVideoEncoder",
+      "version": "1.0.0",
+      "id": "9hm9ktU2n",
+      "position": {
+        "x": 520,
+        "y": 1140
+      },
+      "inputsDB": {
+        "outputCodec": "hevc",
+        "ffmpegPresetEnabled": true,
+        "ffmpegPreset": "slow",
+        "ffmpegQualityEnabled": true,
+        "hardwareEncoding": true,
+        "hardwareType": "qsv",
+        "hardwareDecoding": true,
+        "forceEncoding": true,
+        "ffmpegQuality": "21"
+      }
+    },
+    {
+      "name": "Set 10 Bit Video",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommand10BitVideo",
+      "version": "1.0.0",
+      "id": "ErNcCjM8c",
+      "position": {
+        "x": 400,
+        "y": 1260
+      }
+    },
+    {
+      "name": "Set Container MKV",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetContainer",
+      "version": "1.0.0",
+      "id": "fie1Bz13t",
+      "position": {
+        "x": 400,
+        "y": 1380
+      },
+      "inputsDB": {
+        "container": "mkv",
+        "forceConform": false
+      }
+    },
+    {
+      "name": "Run FFmpeg",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandExecute",
+      "version": "1.0.0",
+      "id": "pvCDmWKS1",
+      "position": {
+        "x": 400,
+        "y": 1500
+      }
+    },
+    {
+      "name": "Check Output Smaller",
+      "sourceRepo": "Community",
+      "pluginName": "compareFileSizeRatio",
+      "version": "2.0.0",
+      "id": "y8byiRzrE",
+      "position": {
+        "x": 400,
+        "y": 1620
+      },
+      "inputsDB": {
+        "greaterThan": 0,
+        "lessThan": 100
+      }
+    },
+    {
+      "name": "Verify Duration 2s",
+      "sourceRepo": "Community",
+      "pluginName": "customFunction",
+      "version": "1.0.0",
+      "id": "4vz1J0P6b",
+      "position": {
+        "x": 400,
+        "y": 1740
+      },
+      "inputsDB": {
+        "code": "module.exports = async (args) => {\n  const jobLog = (m) => { try { args.jobLog(m); } catch (e) {} };\n  const dur = (o) => {\n    try { const d = Number(o && o.ffProbeData && o.ffProbeData.format && o.ffProbeData.format.duration); return d > 0 ? d : 0; }\n    catch (e) { return 0; }\n  };\n  const nd = dur(args.inputFileObj);\n  const od = dur(args.originalLibraryFile);\n  const diff = Math.abs(nd - od);\n  jobLog('Duration check: new=' + nd + 's original=' + od + 's diff=' + diff.toFixed(3) + 's');\n  let out = 2;\n  if (nd > 0 && od > 0 && diff <= 2) { out = 1; jobLog('Duration within 2 s, proceeding to replace'); }\n  else { jobLog('Duration differs by more than 2 s (or is unreadable), keeping original'); }\n  return { outputFileObj: args.inputFileObj, outputNumber: out, variables: args.variables };\n};"
+      }
+    },
+    {
+      "name": "Replace Original File",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "id": "njoPRowbM",
+      "position": {
+        "x": 400,
+        "y": 1860
+      }
+    },
+    {
+      "name": "Notify radarr",
+      "sourceRepo": "Community",
+      "pluginName": "notifyRadarrOrSonarr",
+      "version": "1.0.0",
+      "id": "ThYDS9JwF",
+      "position": {
+        "x": 400,
+        "y": 1980
+      },
+      "inputsDB": {
+        "arr": "radarr",
+        "arr_api_key": "<RADARR_API_KEY>",
+        "arr_host": "http://10.10.10.117:7878"
+      }
+    },
+    {
+      "name": "Refresh Jellyfin",
+      "sourceRepo": "Community",
+      "pluginName": "webRequest",
+      "version": "1.0.0",
+      "id": "qEzFAQ9wD",
+      "position": {
+        "x": 400,
+        "y": 2100
+      },
+      "inputsDB": {
+        "method": "post",
+        "requestUrl": "<JELLYFIN_URL>/Library/Refresh",
+        "requestHeaders": "{\"Content-Type\": \"application/json\", \"X-Emby-Token\": \"<JELLYFIN_API_KEY>\"}",
+        "requestBody": "{}",
+        "logResponseBody": "false",
+        "output2StatusCodes": "",
+        "output2OnNetworkError": "true"
+      }
+    }
+  ],
+  "flowEdges": [
+    {
+      "source": "2Ahnmp9zz",
+      "sourceHandle": "1",
+      "target": "Hr8W3EQHm",
+      "targetHandle": null,
+      "id": "U2vcDrpFt"
+    },
+    {
+      "source": "Hr8W3EQHm",
+      "sourceHandle": "1",
+      "target": "rGx6pNtZ3",
+      "targetHandle": null,
+      "id": "MESXkRfmf"
+    },
+    {
+      "source": "Hr8W3EQHm",
+      "sourceHandle": "2",
+      "target": "AyYj5fN7H",
+      "targetHandle": null,
+      "id": "RFPKQEQLd"
+    },
+    {
+      "source": "rGx6pNtZ3",
+      "sourceHandle": "1",
+      "target": "E7ZdDatRs",
+      "targetHandle": null,
+      "id": "eZyLV2xNV"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "5",
+      "target": "E4nmC0rcW",
+      "targetHandle": null,
+      "id": "fwwvYoPrX"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "6",
+      "target": "E4nmC0rcW",
+      "targetHandle": null,
+      "id": "5Jk1XqlF2"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "7",
+      "target": "E4nmC0rcW",
+      "targetHandle": null,
+      "id": "DHl8wkrlI"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "8",
+      "target": "E4nmC0rcW",
+      "targetHandle": null,
+      "id": "RaEiHUToz"
+    },
+    {
+      "source": "E4nmC0rcW",
+      "sourceHandle": "1",
+      "target": "E7ZdDatRs",
+      "targetHandle": null,
+      "id": "U09r0l0vD"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "4",
+      "target": "aLcXKAG8O",
+      "targetHandle": null,
+      "id": "chLJAJfPg"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "1",
+      "target": "lxkRxKgZl",
+      "targetHandle": null,
+      "id": "tP7pYebsq"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "2",
+      "target": "lxkRxKgZl",
+      "targetHandle": null,
+      "id": "dhpnodcKP"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "3",
+      "target": "lxkRxKgZl",
+      "targetHandle": null,
+      "id": "1fSnJvO2P"
+    },
+    {
+      "source": "AyYj5fN7H",
+      "sourceHandle": "9",
+      "target": "lxkRxKgZl",
+      "targetHandle": null,
+      "id": "dJrqTyjrL"
+    },
+    {
+      "source": "aLcXKAG8O",
+      "sourceHandle": "1",
+      "target": "Ceq4jtFBf",
+      "targetHandle": null,
+      "id": "5v3XoXB38"
+    },
+    {
+      "source": "aLcXKAG8O",
+      "sourceHandle": "2",
+      "target": "BfT0LSc49",
+      "targetHandle": null,
+      "id": "XcpLc8Gwd"
+    },
+    {
+      "source": "BfT0LSc49",
+      "sourceHandle": "1",
+      "target": "Ceq4jtFBf",
+      "targetHandle": null,
+      "id": "qPId6dbAJ"
+    },
+    {
+      "source": "BfT0LSc49",
+      "sourceHandle": "2",
+      "target": "xaXqwOhE4",
+      "targetHandle": null,
+      "id": "YNDShY3i9"
+    },
+    {
+      "source": "Ceq4jtFBf",
+      "sourceHandle": "1",
+      "target": "3V8VPrv9h",
+      "targetHandle": null,
+      "id": "6vO41xARZ"
+    },
+    {
+      "source": "Ceq4jtFBf",
+      "sourceHandle": "2",
+      "target": "xaXqwOhE4",
+      "targetHandle": null,
+      "id": "TVooQauUJ"
+    },
+    {
+      "source": "lxkRxKgZl",
+      "sourceHandle": "1",
+      "target": "Ceq4jtFBf",
+      "targetHandle": null,
+      "id": "9gLsHYkvT"
+    },
+    {
+      "source": "lxkRxKgZl",
+      "sourceHandle": "2",
+      "target": "fyTye4Fyh",
+      "targetHandle": null,
+      "id": "30Jx59b9M"
+    },
+    {
+      "source": "fyTye4Fyh",
+      "sourceHandle": "1",
+      "target": "Ceq4jtFBf",
+      "targetHandle": null,
+      "id": "HxBW9P12L"
+    },
+    {
+      "source": "fyTye4Fyh",
+      "sourceHandle": "2",
+      "target": "xaXqwOhE4",
+      "targetHandle": null,
+      "id": "5JDhePenn"
+    },
+    {
+      "source": "3V8VPrv9h",
+      "sourceHandle": "1",
+      "target": "E7ZdDatRs",
+      "targetHandle": null,
+      "id": "mJrsmll0t"
+    },
+    {
+      "source": "xaXqwOhE4",
+      "sourceHandle": "1",
+      "target": "0HfgOGjsW",
+      "targetHandle": null,
+      "id": "vWhyO65XF"
+    },
+    {
+      "source": "0HfgOGjsW",
+      "sourceHandle": "1",
+      "target": "aAfPMYPoV",
+      "targetHandle": null,
+      "id": "vsPd3RRN5"
+    },
+    {
+      "source": "0HfgOGjsW",
+      "sourceHandle": "2",
+      "target": "9hm9ktU2n",
+      "targetHandle": null,
+      "id": "nownmvdO1"
+    },
+    {
+      "source": "aAfPMYPoV",
+      "sourceHandle": "1",
+      "target": "ErNcCjM8c",
+      "targetHandle": null,
+      "id": "8ul3WsZ1E"
+    },
+    {
+      "source": "9hm9ktU2n",
+      "sourceHandle": "1",
+      "target": "ErNcCjM8c",
+      "targetHandle": null,
+      "id": "U83fOilpZ"
+    },
+    {
+      "source": "ErNcCjM8c",
+      "sourceHandle": "1",
+      "target": "fie1Bz13t",
+      "targetHandle": null,
+      "id": "IkPT8Sssu"
+    },
+    {
+      "source": "fie1Bz13t",
+      "sourceHandle": "1",
+      "target": "pvCDmWKS1",
+      "targetHandle": null,
+      "id": "1nm4xPdVq"
+    },
+    {
+      "source": "pvCDmWKS1",
+      "sourceHandle": "1",
+      "target": "y8byiRzrE",
+      "targetHandle": null,
+      "id": "PWzXHRYWR"
+    },
+    {
+      "source": "y8byiRzrE",
+      "sourceHandle": "1",
+      "target": "4vz1J0P6b",
+      "targetHandle": null,
+      "id": "YdVAly5OO"
+    },
+    {
+      "source": "y8byiRzrE",
+      "sourceHandle": "2",
+      "target": "SkonGlIk5",
+      "targetHandle": null,
+      "id": "5EOJ27V23"
+    },
+    {
+      "source": "y8byiRzrE",
+      "sourceHandle": "3",
+      "target": "SkonGlIk5",
+      "targetHandle": null,
+      "id": "DqK5HbHxY"
+    },
+    {
+      "source": "SkonGlIk5",
+      "sourceHandle": "1",
+      "target": "E7ZdDatRs",
+      "targetHandle": null,
+      "id": "7HPpqccHo"
+    },
+    {
+      "source": "4vz1J0P6b",
+      "sourceHandle": "1",
+      "target": "njoPRowbM",
+      "targetHandle": null,
+      "id": "jvtnPrTVG"
+    },
+    {
+      "source": "4vz1J0P6b",
+      "sourceHandle": "2",
+      "target": "SkonGlIk5",
+      "targetHandle": null,
+      "id": "VcDZd51WK"
+    },
+    {
+      "source": "njoPRowbM",
+      "sourceHandle": "1",
+      "target": "ThYDS9JwF",
+      "targetHandle": null,
+      "id": "isQiTQ8yt"
+    },
+    {
+      "source": "ThYDS9JwF",
+      "sourceHandle": "1",
+      "target": "qEzFAQ9wD",
+      "targetHandle": null,
+      "id": "wbUa2Lmyc"
+    }
+  ]
+}

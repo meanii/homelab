@@ -1,0 +1,35 @@
+# /root/tdarr/compose.yaml in CT 118 (tdarr) on mantis.
+# Tdarr server + web UI + internal node, Intel QuickSync via /dev/dri.
+# Web UI: https://tdarr.home.aniicrite.dev (NPM -> 10.10.10.118:8265).
+services:
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:2.93.01
+    container_name: tdarr
+    environment:
+      TZ: Asia/Kolkata
+      PUID: "1000"
+      PGID: "1000"
+      UMASK_SET: "002"
+      serverIP: 0.0.0.0
+      serverPort: "8266"
+      webUIPort: "8265"
+      internalNode: "true"
+      nodeName: mantis-qsv
+      nodeIP: 0.0.0.0
+      nodePort: "8267"
+      maxLogSizeMB: "10"
+    ports:
+      - "8265:8265"
+      - "8266:8266"
+    volumes:
+      - ./server:/app/server
+      - ./configs:/app/configs
+      - ./logs:/app/logs
+      - /scratch/tdarr-cache:/temp
+      - /data:/data
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "44"
+      - "104"
+    restart: unless-stopped

@@ -1,0 +1,164 @@
+# /root/arr/compose.yaml in CT 117 (arr) on mantis.
+# Media download stack: qBittorrent + Prowlarr + Sonarr + Radarr + Bazarr +
+# Seerr + FlareSolverr + Unpackerr + Recyclarr.
+# All apps run as uid/gid 1000 and see the library at /data (NFS from crab).
+# Hardlinks work because every app mounts /data at the same path.
+# Temp / incomplete data lives in /scratch (excluded from backups).
+# Secrets come from .env (live values only in CT and ~/.config/homelab/arr.env).
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:5.2.4
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+      WEBUI_PORT: "8080"
+      TORRENTING_PORT: "6881"
+    volumes:
+      - ./config/qbittorrent:/config
+      - /data:/data
+      - /scratch/incomplete:/incomplete
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:2.6.5
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config/prowlarr:/config
+    ports:
+      - "9696:9696"
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:4.0.20
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config/sonarr:/config
+      - /data:/data
+    ports:
+      - "8989:8989"
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:6.4.4
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config/radarr:/config
+      - /data:/data
+    ports:
+      - "7878:7878"
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:1.6.2
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config/bazarr:/config
+      - /data:/data
+    ports:
+      - "6767:6767"
+
+  seerr:
+    image: ghcr.io/seerr-team/seerr:v3.5.0
+    container_name: seerr
+    init: true
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: Asia/Kolkata
+      LOG_LEVEL: info
+      PORT: "5055"
+    volumes:
+      - ./config/seerr:/app/config
+    ports:
+      - "5055:5055"
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:v3.5.2
+    container_name: flaresolverr
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: Asia/Kolkata
+      LOG_LEVEL: info
+      PORT: "8191"
+    ports:
+      - "8191:8191"
+
+  unpackerr:
+    image: ghcr.io/unpackerr/unpackerr:v0.16.1
+    container_name: unpackerr
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: Asia/Kolkata
+      UN_DEBUG: "false"
+      UN_SONARR_0_URL: http://sonarr:8989
+      UN_SONARR_0_API_KEY: ${SONARR_API_KEY}
+      UN_SONARR_0_PATHS_0: /data/torrents/tv
+      UN_SONARR_0_PATHS_1: /data/torrents/anime
+      UN_SONARR_0_PROTOCOLS: torrent
+      UN_SONARR_0_TIMEOUT: 10s
+      UN_RADARR_0_URL: http://radarr:7878
+      UN_RADARR_0_API_KEY: ${RADARR_API_KEY}
+      UN_RADARR_0_PATHS_0: /data/torrents/movies
+      UN_RADARR_0_PROTOCOLS: torrent
+      UN_RADARR_0_TIMEOUT: 10s
+      UN_START_DELAY: 1m
+      UN_INTERVAL: 5m
+    volumes:
+      - /data:/data
+
+  decluttarr:
+    # Removes stalled, slow (<50 KB/s for 1 h) and metadata-stuck downloads,
+    # blocklists the release and lets Sonarr/Radarr search for another.
+    # config/decluttarr/config.yaml holds API keys (repo: decluttarr.example.yaml).
+    image: ghcr.io/manimatter/decluttarr:v2.2.0
+    container_name: decluttarr
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config/decluttarr/config.yaml:/app/config/config.yaml:ro
+      - ./config/decluttarr/logs:/app/logs   # app writes logs/ under /app
+    depends_on: [qbittorrent, sonarr, radarr]
+
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:8.7.2
+    container_name: recyclarr
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: Asia/Kolkata
+      CRON_SCHEDULE: "0 4 * * 0"
+    volumes:
+      # Whole /config is one dir (recyclarr v8 keeps cache/state/resources
+      # beside recyclarr.yml; a file mount breaks its cache migration).
+      - ./config/recyclarr:/config
+    # The image cron runs bare `sync`, which in v8.7.2 skips the sonarr
+    # instances (service/instance selection only works with a single -i).
+    # Sync every instance explicitly, once at start and then weekly.
+    entrypoint: ["/bin/bash", "-c", "printf '#!/usr/bin/env bash\\nrecyclarr sync -i tv && recyclarr sync -i anime && recyclarr sync -i movies\\n' > /tmp/cron-all.sh && chmod +x /tmp/cron-all.sh && /tmp/cron-all.sh && echo \"$$CRON_SCHEDULE /tmp/cron-all.sh\" > /tmp/crontab && exec supercronic -passthrough-logs -no-reap /tmp/crontab"]

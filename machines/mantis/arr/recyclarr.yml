@@ -1,0 +1,86 @@
+# Recyclarr syncs TRaSH Guides quality profiles and custom formats into
+# Sonarr and Radarr. It runs weekly (CRON_SCHEDULE in compose.yaml); run it
+# manually with: docker compose run --rm recyclarr sync
+#
+# The quality profiles and custom format groups below mirror the official
+# recyclarr config-templates (sonarr web-1080p, sonarr anime-remux-1080p and
+# radarr hd-bluray-web), inlined by trash_id because that repository ships no
+# includes.json for recyclarr's `template:` directive.
+#
+# Decisions that deliberately differ from TRaSH defaults:
+# - x265 (HD) gets a POSITIVE score (+100) instead of TRaSH's -10000 penalty.
+#   The library pre-transcodes to HEVC anyway, so x265 releases save disk and
+#   bandwidth for these 1080p screens.
+# - Two native custom formats ("Hindi Audio", "English Audio", created in
+#   Sonarr/Radarr, not from TRaSH) score multi-audio releases that include
+#   Hindi or English. They are listed under reset_unmatched_scores.except so
+#   the weekly sync keeps their scores.
+#
+# API keys come from secrets.yml next to this file (see secrets.yml.example).
+# That file is gitignored; live values also sit in ~/.config/homelab/arr.env.
+sonarr:
+  tv:
+    base_url: http://sonarr:8989
+    api_key: !secret sonarr_api_key
+    quality_definition:
+      type: series
+    quality_profiles:
+      - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+        reset_unmatched_scores:
+          enabled: true
+          except:
+            - Hindi Audio
+            - English Audio
+    custom_format_groups:
+      add:
+        - trash_id: 158188097a58d7687dee647e04af0da3 # [Optional] Golden Rule HD
+        - trash_id: 74aff4168620ed49dcc67e92b2c2a5b4 # [Optional] Language Profiles
+        - trash_id: 85fae4a2294965b75710ef2989c850eb # [Streaming Services] HD/UHD boost
+        - trash_id: 59c3af66780d08332fdc64e68297098f # [Unwanted] Unwanted Formats
+    custom_formats:
+      - trash_ids:
+          - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
+        assign_scores_to:
+          - name: WEB-1080p
+            score: 100
+  anime:
+    base_url: http://sonarr:8989
+    api_key: !secret sonarr_api_key
+    quality_definition:
+      type: anime
+    quality_profiles:
+      - trash_id: 20e0fc959f1f1704bed501f23bdae76f # [Anime] Remux-1080p
+        reset_unmatched_scores:
+          enabled: true
+          except:
+            - Hindi Audio
+            - English Audio
+    custom_formats:
+      - trash_ids:
+          - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
+        assign_scores_to:
+          - name: "[Anime] Remux-1080p"
+            score: 100
+radarr:
+  movies:
+    base_url: http://radarr:7878
+    api_key: !secret radarr_api_key
+    quality_definition:
+      type: movie
+    quality_profiles:
+      - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
+          except:
+            - Hindi Audio
+            - English Audio
+    custom_format_groups:
+      add:
+        - trash_id: f8bf8eab4617f12dfdbd16303d8da245 # [Optional] Golden Rule HD
+        - trash_id: a3ac6af01d78e4f21fcb75f601ac96df # [Unwanted] Unwanted Formats
+    custom_formats:
+      - trash_ids:
+          - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
+        assign_scores_to:
+          - name: HD Bluray + WEB
+            score: 100
