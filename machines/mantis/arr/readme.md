@@ -224,9 +224,13 @@ Telegram (token/chat id from `~/.config/homelab/telegram.env`):
 Sonarr and Radarr notify on grab, import, upgrade, health issue and
 failure; each sent a test message OK. Seerr notifies on requests,
 approvals, availability and failures (configured by `seerr-setup.py`). Sonarr/Radarr also update Jellyfin on import, upgrade,
-rename and delete (MediaBrowser connection; in Sonarr v4/Radarr v6
-connections live under notifications, there is no separate
-`/api/v3/connection`).
+rename and delete (MediaBrowser connection named `Jellyfin`, `updateLibrary`
+on). The triggers must be switched on explicitly: Radarr `onDownload`,
+`onUpgrade`, `onRename`, `onMovieDelete`, `onMovieFileDelete*`; Sonarr also
+`onImportComplete`, `onSeriesAdd`, `onSeriesDelete`, `onEpisodeFileDelete*`.
+With `onDownload` off, imports reach Jellyfin only at the daily 10:00 scan.
+In Sonarr v4/Radarr v6 connections live under notifications, there is no
+separate `/api/v3/connection`.
 
 ## URLs
 
