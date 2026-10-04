@@ -29,6 +29,8 @@ CT 116-118 (Jellyfin, arr, Tdarr) are backed up for their configuration only. Th
 
 The jobs have no `prune-backups`: retention is set by the prune job on the Proxmox Backup Server in crab ([`machines/crab/pbs`](../../crab/pbs)).
 
+Restore test (October 2026): the latest CT 101 (Vaultwarden) backup restored from `crab-pbs` into a temporary CT 901 in 66 s (`pct restore 901 <volid> --storage local-lvm --unique 1`, network removed, `onboot 0`). `pragma integrity_check` on the restored `db.sqlite3` returned `ok` and its user and vault item counts matched the live database. CT 901 was destroyed afterwards. Repeat this after major changes to the backup setup.
+
 ## Storage on crab
 
 [`crab-storage.sh`](crab-storage.sh) adds two storages that live on crab's 2 TB HDD, and prepares the host for the media containers:

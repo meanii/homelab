@@ -32,7 +32,7 @@ iface vmbr1 inet static
 
 - `vmbr0`: home LAN. Every container gets a static LAN address with `firewall=1`.
 - `vmbr1`: internal bridge with no physical port, NAT to the LAN. A container's internal address is `10.10.10.<CT id>`; NPM forwards to these.
-- Tailscale runs on the host.
+- Tailscale runs on the host. It advertises the route `192.168.0.203/32` (NPM) with SNAT, so a tailnet device reaches every `*.home.aniicrite.dev` name from anywhere: those names resolve to `192.168.0.203` in public DNS. The route must be approved once in the Tailscale admin console (Machines -> `home` -> Edit route settings). Reproduce with `tailscale set --advertise-routes=192.168.0.203/32`.
 
 ## Containers
 
