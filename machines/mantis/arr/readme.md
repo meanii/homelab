@@ -144,13 +144,16 @@ Supported setup, no workarounds:
 
 ## Logins
 
-Sonarr, Radarr and Prowlarr use forms login (`authenticationMethod: forms`,
-`authenticationRequired: enabled`, set with `PUT /api/{v3,v1}/config/host/1`).
-Bazarr uses form login (`auth.type: form` in `config/bazarr/config/config.yaml`,
-password stored as MD5). All four share one user and password,
-`ARR_UI_USER`/`ARR_UI_PASSWORD` in `~/.config/homelab/arr.env` on crab. The apps
-talk to each other with API keys, which are unaffected. qBittorrent has its own
-login; Seerr uses Jellyfin accounts.
+The admin UIs are behind tinyauth single sign-on on NPM (PocketID, Google or
+username/password; see [`nginxproxymanager`](../nginxproxymanager)). Their own logins
+are off: Sonarr, Radarr and Prowlarr `authenticationMethod: external` (set with
+`PUT /api/{v3,v1}/config/host/1`), Bazarr `auth.type: null` in
+`config/bazarr/config/config.yaml`, qBittorrent bypasses its login for NPM's address
+`10.10.10.107/32` (`bypass_auth_subnet_whitelist`). `117.fw` closes their ports to
+the LAN, so the only way in is through NPM. The apps talk to each other with API
+keys, which are unaffected; the Homepage widgets still log in to qBittorrent with
+its password. Seerr keeps its own login (Jellyfin accounts). The tinyauth password
+login uses `ARR_UI_USER`/`ARR_UI_PASSWORD` from `~/.config/homelab/arr.env` on crab.
 
 ## Queue and connectivity
 

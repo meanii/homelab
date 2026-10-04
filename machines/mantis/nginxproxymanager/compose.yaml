@@ -17,9 +17,11 @@ services:
   # tinyauth: forward-auth login in front of NPM hosts, backed by PocketID (CT 115)
   tinyauth:
     container_name: tinyauth
-    image: ghcr.io/steveiliop56/tinyauth:v3
+    image: ghcr.io/tinyauthapp/tinyauth:v5.2.0
     restart: unless-stopped
-    env_file: .env # see .env.example
+    env_file: tinyauth.env # see tinyauth/tinyauth.env.example
+    volumes:
+      - ./tinyauth:/data # users.txt, sessions database, OIDC keys
 
   # frp client: tunnel to frps on beetle
   frpc:

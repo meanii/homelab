@@ -1,8 +1,8 @@
 # Homepage (CT 109)
 
 [Homepage](https://gethomepage.dev) v2.4.0 at `/root/homepage` in CT 109, UI at
-`https://dash.home.aniicrite.dev` (NPM -> `10.10.10.109:3000`, access list
-`media-admin`: same user and password as the arr apps). One page with every service,
+`https://dash.home.aniicrite.dev` (NPM -> `10.10.10.109:3000`, behind tinyauth). One
+page with every service,
 up/down dots and live numbers.
 
 - [`compose.yaml`](compose.yaml), [`.env.example`](.env.example): API keys and

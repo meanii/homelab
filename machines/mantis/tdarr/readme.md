@@ -9,11 +9,10 @@ on `local-lvm`, LAN `192.168.0.211`, internal `10.10.10.118`, startup order 18, 
 Transcode cache is `/scratch/tdarr-cache` (binds to `/temp` in the container, on the
 SSD rootfs, excluded from backups). Media is visible at `/data` (bind mount of the
 `crab-media` NFS share, never backed up). UI: `https://tdarr.home.aniicrite.dev`
-(NPM -> `10.10.10.118:8265`). Tdarr's own login is off; the NPM host uses the access
-list `media-admin` (HTTP basic auth, same user and password as the arr apps, in
-`ARR_UI_USER`/`ARR_UI_PASSWORD` of `~/.config/homelab/arr.env` on crab), and
-`118.fw` no longer opens 8265 to the LAN, so the UI is only reachable through NPM.
-Port 8266 (server, for nodes) stays open to `+home`.
+(NPM -> `10.10.10.118:8265`). Tdarr's own login is off; the NPM host is protected by
+tinyauth (see [`nginxproxymanager`](../nginxproxymanager)), and `118.fw` does not open
+8265 to the LAN, so the UI is only reachable through NPM. Port 8266 (server, for
+nodes) stays open to `+home`.
 
 Image: `ghcr.io/haveagitgat/tdarr:2.93.01` (pinned). Server on 8266, web UI on 8265,
 internal node `mantis-qsv` with `/dev/dri` passed through. The render node is passed

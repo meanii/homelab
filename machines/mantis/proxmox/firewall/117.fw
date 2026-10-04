@@ -5,6 +5,8 @@ policy_in: DROP
 
 [RULES]
 GROUP base
-IN ACCEPT -source +home -p tcp -dport 8080,9696,8989,7878,6767,5055 -log nolog
+# Admin UIs (8080 qBittorrent, 9696, 8989, 7878, 6767) are reachable only through NPM
+# over vmbr1, behind tinyauth. Seerr (5055) keeps its own login.
+IN ACCEPT -source +home -p tcp -dport 5055 -log nolog
 IN ACCEPT -p tcp -dport 6881 -log nolog
 IN ACCEPT -p udp -dport 6881 -log nolog
