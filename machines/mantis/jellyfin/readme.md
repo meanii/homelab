@@ -53,6 +53,43 @@ arr apps trigger refreshes, and a full scan runs daily at 10:00 local time
 10:30 and chapter images at 11:00 for the same reason. Quick Connect is enabled for
 TV and phone sign-in. No SSO plugin is installed.
 
+## Theme, plugins and tuning
+
+Theme: [ElegantFin](https://github.com/lscambo13/ElegantFin) v26.09.05 (its release
+notes cover Jellyfin 12), loaded in Dashboard -> Branding -> Custom CSS, pinned to
+the release tag:
+
+```css
+@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@v26.09.05/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+```
+
+Clients load the CSS from jsDelivr, so the theme needs internet access on the client.
+To update, change the tag after reading the release notes.
+
+Plugins from the official repository, all built for Jellyfin 12:
+
+| Plugin | Why |
+| --- | --- |
+| AniList | anime metadata and images; first fetcher for Series, Episode and images in the Anime library, TMDb second |
+| Chapter Segments Provider | turns chapters named like "Intro"/"Credits" into media segments, so clients offer a skip button |
+| Subtitle Extract | extracts embedded text subtitles ahead of playback, so starting a video with subtitles does not wait for extraction over NFS |
+| Playback Reporting | watch history and statistics per user and device |
+
+Intro Skipper (third-party) is not installed: its repository did not publish a
+Jellyfin 12 build when this was set up.
+
+Other settings:
+
+- Server name `Jellyfin` (the default showed the container id on the login page).
+- Network: known proxy `10.10.10.107` (NPM over vmbr1); local subnets
+  `192.168.0.0/23`, `10.10.10.0/24`, `100.64.0.0/10` (tailnet).
+- Trickplay (seek previews) uses QSV decode and encode with key-frame-only
+  extraction, which reads far less of each file over NFS. It runs in the 10:30 task,
+  not during library scans. Chapter image extraction is off in all libraries
+  (trickplay replaces it and it reads whole files).
+- Movies library: "Automatically add to collection" on, so films of a TMDb collection
+  are grouped.
+
 ## Rebuild
 
 Create the container on mantis:
