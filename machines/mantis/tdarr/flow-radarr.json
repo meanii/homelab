@@ -349,7 +349,7 @@
       "inputsDB": {
         "method": "post",
         "requestUrl": "<JELLYFIN_URL>/Library/Refresh",
-        "requestHeaders": "{\"Content-Type\": \"application/json\", \"X-Emby-Token\": \"<JELLYFIN_API_KEY>\"}",
+        "requestHeaders": "{\"Content-Type\": \"application/json\", \"Authorization\": \"MediaBrowser Token=\\\"<JELLYFIN_API_KEY>\\\"\"}",
         "requestBody": "{}",
         "logResponseBody": "false",
         "output2StatusCodes": "",
