@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily media quota check
+
+[Timer]
+OnCalendar=*-*-* 09:30
+Persistent=true
+
+[Install]
+WantedBy=timers.target

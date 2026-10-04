@@ -101,6 +101,21 @@ Two deliberate differences from TRaSH defaults:
   under `reset_unmatched_scores.except` so the weekly sync preserves
   them (verified: scores survive a sync).
 
+More deliberate settings, all in `recyclarr.yml` so the weekly sync keeps them:
+
+- Upgrades are off in all three profiles (`upgrade.allowed: false`) and
+  propers/repacks are `do_not_prefer`. With upgrades on, a slightly better
+  release made Radarr download the whole film again, overwrite the file Tdarr
+  had shrunk, and queue it for Tdarr again.
+- `HDR (avoid)` (native custom format, release-name regex for HDR, HDR10(+),
+  HLG, Dolby Vision, UHD and 2160p) scores -10000 in all three profiles, so
+  HDR releases fall below the minimum score of 0 and are never grabbed. All
+  screens are 1080p SDR, and Tdarr skips HDR files, so an HDR release would
+  stay at full size (Gladiator, grabbed before this rule, is 17.9 GB).
+
+Recycle bin: deleted files go to `/data/.recycle/{movies,tv}/` (outside the
+libraries Jellyfin and Tdarr scan) and are removed after 7 days.
+
 Recyclarr runs weekly Sunday 04:00 plus once at container start. Its
 cron service uses a custom entrypoint because in v8.7.2 bare `sync` only
 syncs the radarr instance and `sync sonarr` syncs nothing; only a single
@@ -116,8 +131,11 @@ API keys come from `secrets.yml` via `!secret` (gitignored; `.env`
 Supported setup, no workarounds:
 
 - qBittorrent global share action is **Stop** (`max_ratio_act: 0`),
-  ratio limit 1.0 and seeding time 10080 minutes (7 days) enabled. When a
-  torrent hits either limit it stops (keeps seeding until then).
+  ratio limit 1.0 and seeding time 4320 minutes (3 days) enabled. When a
+  torrent hits either limit it stops (keeps seeding until then). Behind
+  carrier-grade NAT few peers download from us (ratios of 0.01-0.2 after a
+  day), and once Tdarr replaces a library file the seeding copy is no longer
+  a hardlink and takes its own space, so 3 days is the compromise.
 - Sonarr (both download clients) and Radarr (one) have **Remove
   Completed Downloads on**. Completed Download Handling then removes the
   torrent and its files after import; the hardlinked library copy stays.

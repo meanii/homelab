@@ -1,0 +1,6 @@
+[Unit]
+Description=Telegram alert when the media quota passes 85%
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/media-quota-alert.sh

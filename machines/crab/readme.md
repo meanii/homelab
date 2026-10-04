@@ -29,6 +29,11 @@ LABEL=data /mnt/data ext4 defaults,noatime,nofail,prjquota 0 2
 
 [`storage-setup.sh`](storage-setup.sh) sets this up: mount, project quota (needs the disk unmounted once, so stop PBS first), directories, NFS export, firewall rules and the Beszel filesystem name.
 
+A daily timer (`media-quota-alert.timer`, 09:30) sends a Telegram message when
+`media/` passes 85% of its quota: [`quota-alert/`](quota-alert)
+(script in `/usr/local/bin`, units in `/etc/systemd/system`, token from
+`/etc/smartd-telegram.env`).
+
 ## NFS export
 
 `/mnt/data/media` is exported over NFS 4.2 only (versions 3, 4.0 and 4.1 are off), to mantis (`192.168.0.122`) only, with `no_root_squash` so the Proxmox host can manage ISOs and templates. Mantis mounts it as storage `crab-media` and bind-mounts it into CT 116-118 as `/data`. The apps there run as uid 1000, which the containers map to host uid 1000, so files on the HDD belong to `anil`. Downloads and the library are on the same filesystem, so Sonarr and Radarr import with hardlinks instead of copies. See [`machines/mantis/proxmox`](../mantis/proxmox).

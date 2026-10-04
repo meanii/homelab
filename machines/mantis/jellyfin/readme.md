@@ -47,6 +47,12 @@ zero when idle.
 | Shows | tvshows | `/data/library/tv` | language en, country IN |
 | Anime | tvshows | `/data/library/anime` | language en, country IN |
 
+Playback language (user `admin`; set the same for new users under Users ->
+Playback): no preferred audio language and "play default audio track" on, so
+each file plays its original-language track; subtitles English in "Smart"
+mode, shown only when the audio is not in the preferred language. Anime then
+plays in Japanese with English subtitles, Hindi films in Hindi.
+
 Real-time monitoring is off (inotify does not work reliably over NFS); the
 arr apps trigger refreshes, and a full scan runs daily at 10:00 local time
 (`RefreshLibrary`), after Tdarr's 03:00-09:00 window. Trickplay images run at

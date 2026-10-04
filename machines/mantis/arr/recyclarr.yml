@@ -22,15 +22,20 @@ sonarr:
   tv:
     base_url: http://sonarr:8989
     api_key: !secret sonarr_api_key
+    media_management:
+      propers_and_repacks: do_not_prefer
     quality_definition:
       type: series
     quality_profiles:
       - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+        upgrade:
+          allowed: false # Tdarr re-encodes every file; upgrades only re-download
         reset_unmatched_scores:
           enabled: true
           except:
             - Hindi Audio
             - English Audio
+            - HDR (avoid)
     custom_format_groups:
       add:
         - trash_id: 158188097a58d7687dee647e04af0da3 # [Optional] Golden Rule HD
@@ -46,15 +51,20 @@ sonarr:
   anime:
     base_url: http://sonarr:8989
     api_key: !secret sonarr_api_key
+    media_management:
+      propers_and_repacks: do_not_prefer
     quality_definition:
       type: anime
     quality_profiles:
       - trash_id: 20e0fc959f1f1704bed501f23bdae76f # [Anime] Remux-1080p
+        upgrade:
+          allowed: false # Tdarr re-encodes every file; upgrades only re-download
         reset_unmatched_scores:
           enabled: true
           except:
             - Hindi Audio
             - English Audio
+            - HDR (avoid)
     custom_formats:
       - trash_ids:
           - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
@@ -65,15 +75,20 @@ radarr:
   movies:
     base_url: http://radarr:7878
     api_key: !secret radarr_api_key
+    media_management:
+      propers_and_repacks: do_not_prefer
     quality_definition:
       type: movie
     quality_profiles:
       - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+        upgrade:
+          allowed: false # Tdarr re-encodes every file; upgrades only re-download
         reset_unmatched_scores:
           enabled: true
           except:
             - Hindi Audio
             - English Audio
+            - HDR (avoid)
     custom_format_groups:
       add:
         - trash_id: f8bf8eab4617f12dfdbd16303d8da245 # [Optional] Golden Rule HD
