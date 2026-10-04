@@ -2,7 +2,7 @@
 
 Proxmox Backup Server 4.2 in Docker, using the unofficial image [`ayufan/proxmox-backup-server`](https://github.com/ayufan/pve-backup-server-dockerfiles) (Proxmox does not publish one). Mantis sends its vzdump jobs here (storage `crab-pbs`, see [`machines/mantis/proxmox`](../../mantis/proxmox)), including the Immich photo library. This is the only backup of mantis.
 
-UI: `https://pbs.home.aniicrite.dev` and `https://pbs.ghost.aniicrite.dev` (NPM in CT 107 -> `https://192.168.0.10:8007`), or `https://192.168.0.10:8007` directly; user `admin@pbs`. The login is the PBS realm, not PAM; the container has no shell login.
+UI: `https://pbs.home.aniicrite.dev` (NPM in CT 107 -> `https://192.168.0.10:8007`, home network and tailnet only), or `https://192.168.0.10:8007` directly; user `admin@pbs`. The login is the PBS realm, not PAM; the container has no shell login.
 
 | Path | What |
 | --- | --- |
@@ -24,6 +24,8 @@ The vzdump jobs on mantis (`daily-immich` for CT 100, `weekly-backup` for CT 101
 ## Access
 
 Mantis uses the API token `mantis@pbs!pve` with role `DatastoreBackup` on `/datastore/hdd` only: it can write and restore its own backups but not delete or prune them. The user `mantis@pbs` has the same ACL because a token never gets more rights than its user.
+
+The Homepage dashboard (CT 109) reads status with the token `homepage@pbs!dash`, role `Audit` on `/` (read-only). The task list shows a daily `aptupdate` warning: the container cannot reach the Proxmox apt repositories, which is harmless.
 
 ## Setup
 

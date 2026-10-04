@@ -35,6 +35,23 @@ LABEL=data /mnt/data ext4 defaults,noatime,nofail,prjquota 0 2
 
 Beszel shows the disk as "Data HDD" with usage, I/O and S.M.A.R.T. data.
 
+## Firewall
+
+ufw is on: incoming traffic is dropped unless a rule allows it, outgoing is open.
+
+| Port | From | For |
+| --- | --- | --- |
+| 22, 3389 (GNOME remote desktop) | `192.168.0.0/23`, `tailscale0` | SSH and remote desktop |
+| 5201 (iperf3), 18080 (downly) | `192.168.0.0/23` | network tests, my project |
+| 2049, 111 | mantis `192.168.0.122` | NFS |
+| 8007 | mantis `.122`, NPM `.203`, Homepage in CT 109 `.210` | PBS |
+
+[`storage-setup.sh`](storage-setup.sh) adds the PBS and NFS rules; the others were added by hand with `ufw allow`.
+
+## Disk health
+
+[`smartd/smartd.conf`](smartd/smartd.conf) (live at `/etc/smartd.conf`, HDD serial filled in) watches all three drives. The HDD runs a short self-test daily at 12:00 and a long one (about 4.5 h) on Saturdays at 13:00, after the PBS verify job. Warnings go to Telegram through [`smartd/smartd-telegram.sh`](smartd/smartd-telegram.sh) (`/usr/local/bin/`), which reads `/etc/smartd-telegram.env` (copy of `~/.config/homelab/telegram.env`, mode 600). Self-test results: `sudo smartctl -l selftest /dev/sda`.
+
 ## Beszel agent
 
 Installed in two steps, because the first step needs no root:
