@@ -41,7 +41,7 @@ iface vmbr1 inet static
 | 100 | immich | [`immich/`](immich) at `/root` | yes, nightly, including the photo library |
 | 101 | vaultwarden | [`vaultwarden/`](vaultwarden) at `/root` | yes |
 | 102, 104, 106 | hermes agents | Hermes AI agents, installed per their upstream docs; not in this repo | no |
-| 103 | adguard | AdGuard Home binary, `AdGuardHome.service`, config `/opt/AdGuardHome/AdGuardHome.yaml` (not copied: holds the admin password hash). DNS on 53, UI on 80, upstreams Quad9 and Cloudflare DoH | no |
+| 103 | adguard | AdGuard Home binary, `AdGuardHome.service`, config `/opt/AdGuardHome/AdGuardHome.yaml` (not copied). The admin UI has no login of its own (`users: []`): it is only reachable through NPM at `dns.home` behind tinyauth, and `103.fw` opens only DNS (53) to the LAN. DNS on 53, UI on 80, upstreams Quad9 and Cloudflare DoH | no |
 | 107 | nginxproxymanager | [`nginxproxymanager/`](nginxproxymanager) at `/root` | yes |
 | 109 | beszel | [`beszel/`](beszel) at `/root/beszel` | no |
 | 112 | downly | my own project, deployed from its repository | no |

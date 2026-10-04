@@ -34,7 +34,7 @@ docker compose up -d
 (cd cup && docker compose up -d)
 ```
 
-Admin UI: `http://192.168.0.203:81` from the home network. Replace the default login (`admin@example.com` / `changeme`) on first start.
+Admin UI: `https://nginx.home.aniicrite.dev` (behind tinyauth, home network and tailnet only) or `http://192.168.0.203:81` from the home network. Replace the default login (`admin@example.com` / `changeme`) on first start.
 
 The frp token is read through `{{ .Envs.FRP_AUTH_TOKEN }}` on both sides. Change it on beetle and here together, then restart frps and frpc. Upgrade frps and frpc together; frp v0.71 only guarantees compatibility with frpc v0.61 and newer.
 
@@ -46,7 +46,8 @@ Every host: wildcard certificate, Force SSL, Block common exploits, Websockets o
 | --- | --- |
 | immich | `10.10.10.100:2283` |
 | vw | `10.10.10.101:8004` |
-| dns (AdGuard) | `10.10.10.103:80` (`home` only; admin UI only, DNS-over-HTTPS is off) |
+| nginx (NPM admin) | `192.168.0.203:81` (`home` only, tinyauth) |
+| dns (AdGuard) | `10.10.10.103:80` (`home` only, tinyauth; admin UI only, DNS-over-HTTPS is off) |
 | beszel | `10.10.10.109:8090` |
 | pocketid | `10.10.10.115:1411` (`ghost` only) |
 | pbs (Proxmox Backup Server on crab) | `https://192.168.0.10:8007` (`home` only) |
@@ -60,7 +61,8 @@ Every host: wildcard certificate, Force SSL, Block common exploits, Websockets o
 ## Single sign-on (tinyauth)
 
 One login page at `https://auth.home.aniicrite.dev` protects the admin hosts: qbit,
-sonarr, radarr, prowlarr, bazarr, tdarr and dash. It offers three ways in:
+sonarr, radarr, prowlarr, bazarr, tdarr, dash, nginx (NPM admin, which keeps its own
+login as a second step) and dns (AdGuard, whose own login is removed: `users: []`). It offers three ways in:
 
 - PocketID (passkeys), as OIDC client `tinyauth` in PocketID
 - Google

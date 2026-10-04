@@ -7,4 +7,4 @@ policy_in: DROP
 GROUP base
 IN ACCEPT -p udp -dport 53 -log nolog
 IN ACCEPT -p tcp -dport 53 -log nolog
-IN ACCEPT -source +home -p tcp -dport 80 -log nolog
+# Admin UI (80) only through NPM over vmbr1, behind tinyauth.
