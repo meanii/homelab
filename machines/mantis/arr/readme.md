@@ -131,11 +131,11 @@ API keys come from `secrets.yml` via `!secret` (gitignored; `.env`
 Supported setup, no workarounds:
 
 - qBittorrent global share action is **Stop** (`max_ratio_act: 0`),
-  ratio limit 1.0 and seeding time 4320 minutes (3 days) enabled. When a
+  ratio limit 1.0 and seeding time 1440 minutes (1 day) enabled. When a
   torrent hits either limit it stops (keeps seeding until then). Behind
   carrier-grade NAT few peers download from us (ratios of 0.01-0.2 after a
   day), and once Tdarr replaces a library file the seeding copy is no longer
-  a hardlink and takes its own space, so 3 days is the compromise.
+  a hardlink and takes its own space, so torrents are kept for one day.
 - Sonarr (both download clients) and Radarr (one) have **Remove
   Completed Downloads on**. Completed Download Handling then removes the
   torrent and its files after import; the hardlinked library copy stays.
