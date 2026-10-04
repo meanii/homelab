@@ -1,0 +1,101 @@
+# Internal URLs use vmbr1 (10.10.10.x); CT 109 is on that bridge.
+- Media:
+    - Jellyfin:
+        icon: jellyfin.svg
+        href: https://jellyfin.home.aniicrite.dev
+        siteMonitor: http://10.10.10.116:8096/health
+        widget:
+          type: jellyfin
+          url: http://10.10.10.116:8096
+          key: "{{HOMEPAGE_VAR_JELLYFIN_KEY}}"
+          enableBlocks: true
+          enableNowPlaying: true
+          version: 2 # Jellyfin 12 API
+    - Requests:
+        icon: jellyseerr.svg
+        href: https://requests.home.aniicrite.dev
+        widget:
+          type: jellyseerr
+          url: http://10.10.10.117:5055
+          key: "{{HOMEPAGE_VAR_SEERR_KEY}}"
+    - Tdarr:
+        icon: tdarr.svg
+        href: https://tdarr.home.aniicrite.dev
+        widget:
+          type: tdarr
+          url: http://10.10.10.118:8265
+- Downloads:
+    - Sonarr:
+        icon: sonarr.svg
+        href: https://sonarr.home.aniicrite.dev
+        widget:
+          type: sonarr
+          url: http://10.10.10.117:8989
+          key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
+    - Radarr:
+        icon: radarr.svg
+        href: https://radarr.home.aniicrite.dev
+        widget:
+          type: radarr
+          url: http://10.10.10.117:7878
+          key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
+    - qBittorrent:
+        icon: qbittorrent.svg
+        href: https://qbit.home.aniicrite.dev
+        widget:
+          type: qbittorrent
+          url: http://10.10.10.117:8080
+          username: "{{HOMEPAGE_VAR_QBIT_USER}}"
+          password: "{{HOMEPAGE_VAR_QBIT_PASS}}"
+    - Prowlarr:
+        icon: prowlarr.svg
+        href: https://prowlarr.home.aniicrite.dev
+        widget:
+          type: prowlarr
+          url: http://10.10.10.117:9696
+          key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
+    - Bazarr:
+        icon: bazarr.svg
+        href: https://bazarr.home.aniicrite.dev
+        widget:
+          type: bazarr
+          url: http://10.10.10.117:6767
+          key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
+- Infrastructure:
+    - Proxmox:
+        icon: proxmox.svg
+        href: https://proxmox.home.aniicrite.dev
+        siteMonitor: https://192.168.0.122:8006
+    - Backup server:
+        icon: proxmox-backup-server.svg
+        href: https://pbs.home.aniicrite.dev
+        widget:
+          type: proxmoxbackupserver
+          url: https://192.168.0.10:8007
+          username: "{{HOMEPAGE_VAR_PBS_TOKEN_ID}}"
+          password: "{{HOMEPAGE_VAR_PBS_TOKEN}}"
+    - Beszel:
+        icon: beszel.svg
+        href: https://beszel.home.aniicrite.dev
+        siteMonitor: http://10.10.10.109:8090
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.svg
+        href: https://nginx.home.aniicrite.dev
+        siteMonitor: http://192.168.0.203:81
+    - AdGuard Home:
+        icon: adguard-home.svg
+        href: https://dns.home.aniicrite.dev
+        siteMonitor: http://10.10.10.103:80
+- Apps:
+    - Immich:
+        icon: immich.svg
+        href: https://immich.home.aniicrite.dev
+        siteMonitor: http://10.10.10.100:2283
+    - Vaultwarden:
+        icon: vaultwarden.svg
+        href: https://vw.home.aniicrite.dev
+        siteMonitor: http://10.10.10.101:8004
+    - PocketID:
+        icon: pocket-id.svg
+        href: https://pocketid.ghost.aniicrite.dev
+        siteMonitor: http://10.10.10.115:1411

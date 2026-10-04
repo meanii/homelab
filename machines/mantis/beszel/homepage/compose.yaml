@@ -1,0 +1,17 @@
+# /root/homepage/compose.yaml in CT 109 (beszel) on mantis.
+# Homepage dashboard at https://dash.home.aniicrite.dev (NPM -> 10.10.10.109:3000).
+# Widget API keys come from .env as HOMEPAGE_VAR_* (see .env.example).
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v2.4.0
+    container_name: homepage
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Asia/Kolkata
+    volumes:
+      - ./config:/app/config
+    ports:
+      - "3000:3000"

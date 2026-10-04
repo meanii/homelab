@@ -96,7 +96,19 @@ call("POST", "/settings/notifications/telegram/test", {
     "enabled": True, "types": TYPES,
     "options": {"botAPI": env["TELEGRAM_BOT_TOKEN"], "chatId": env["TELEGRAM_CHAT_ID"]}})
 
-# 5. Finish the setup wizard.
+# 5. Defaults for new users (family accounts sign in with their Jellyfin login):
+# request + auto-approve + view/create issues, 5 movies and 5 seasons per 7 days.
+# Send fields one by one: posting the whole settings object fails on read-only apiKey.
+REQUEST, AUTO_APPROVE, VIEW_ISSUES, CREATE_ISSUES = 32, 128, 2097152, 4194304
+for key, value in (
+        ("defaultPermissions", REQUEST | AUTO_APPROVE | VIEW_ISSUES | CREATE_ISSUES),
+        ("defaultQuotas", {"movie": {"quotaLimit": 5, "quotaDays": 7},
+                           "tv": {"quotaLimit": 5, "quotaDays": 7}}),
+        ("applicationUrl", "https://requests.ghost.aniicrite.dev"),
+        ("discoverRegion", "IN"), ("streamingRegion", "IN")):
+    call("POST", "/settings/main", {key: value})
+
+# 6. Finish the setup wizard.
 call("POST", "/settings/initialize")
 print(json.dumps({
     "initialized": call("GET", "/settings/public").get("initialized"),

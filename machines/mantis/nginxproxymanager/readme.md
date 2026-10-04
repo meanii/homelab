@@ -47,7 +47,8 @@ Every host: wildcard certificate, Force SSL, Block common exploits, Websockets o
 | dns (AdGuard) | `10.10.10.103:80` |
 | beszel | `10.10.10.109:8090` |
 | pocketid | `10.10.10.115:1411` (`ghost` only) |
-| pbs (Proxmox Backup Server on crab) | `https://192.168.0.10:8007` |
+| pbs (Proxmox Backup Server on crab) | `https://192.168.0.10:8007` (`home` only) |
+| dash (Homepage) | `10.10.10.109:3000` (`home` only, access list `media-admin`) |
 | jellyfin | `10.10.10.116:8096` |
 | requests (Seerr) | `10.10.10.117:5055` |
 | qbit, prowlarr, sonarr, radarr, bazarr | `10.10.10.117:8080`, `:9696`, `:8989`, `:7878`, `:6767` (`home` only) |

@@ -214,6 +214,12 @@ anime `[Anime] Remux-1080p`, `/data/library/anime`, series type anime),
 Telegram notifications, then `POST /settings/initialize`. Radarr and
 Sonarr are reached by their compose service names.
 
+Family accounts: anyone with a Jellyfin account can sign in to Seerr with
+it (new Jellyfin sign-ins on). New users get request, auto-approve and
+issue permissions, limited to 5 movies and 5 seasons per 7 days; change
+limits per user in Seerr -> Users. Discover and streaming region is India,
+and notification links point to `requests.ghost.aniicrite.dev`.
+
 Search and the media pages use `api.themoviedb.org`; Jellyfin's TMDB
 metadata provider uses it too. All traffic, torrents included, goes
 through the normal ISP connection (no VPN or proxy).

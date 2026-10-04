@@ -1,0 +1,9 @@
+- datetime:
+    text_size: md
+    format:
+      dateStyle: medium
+      timeStyle: short
+      hour12: false
+- search:
+    provider: duckduckgo
+    target: _blank

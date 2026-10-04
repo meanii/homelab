@@ -2,6 +2,8 @@
 
 [Beszel](https://github.com/henrygd/beszel) v0.20.0 monitors all four machines. The hub runs in CT 109 (`beszel`, Debian 13, 1 core, 512 MB, 4 GB on `local-lvm`, LAN `192.168.0.210`, internal `10.10.10.109`) at `/root/beszel`. UI: `https://beszel.home.aniicrite.dev` (NPM -> `10.10.10.109:8090`, websockets on).
 
+CT 109 also runs the [Homepage](homepage/) dashboard (1 GB RAM since then) at `https://dash.home.aniicrite.dev`.
+
 ## Hub
 
 ```bash
