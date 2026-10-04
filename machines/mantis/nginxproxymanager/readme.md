@@ -44,7 +44,7 @@ Every host: wildcard certificate, Force SSL, Block common exploits, Websockets o
 | --- | --- |
 | immich | `10.10.10.100:2283` |
 | vw | `10.10.10.101:8004` |
-| dns (AdGuard) | `10.10.10.103:80` |
+| dns (AdGuard) | `10.10.10.103:80` (`home` only; admin UI only, DNS-over-HTTPS is off) |
 | beszel | `10.10.10.109:8090` |
 | pocketid | `10.10.10.115:1411` (`ghost` only) |
 | pbs (Proxmox Backup Server on crab) | `https://192.168.0.10:8007` (`home` only) |
