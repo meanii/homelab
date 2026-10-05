@@ -28,11 +28,14 @@ iface vmbr1 inet static
     post-up echo 1 > /proc/sys/net/ipv4/ip_forward
     post-up iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o vmbr0 -j MASQUERADE
     post-down iptables -t nat -D POSTROUTING -s 10.10.10.0/24 -o vmbr0 -j MASQUERADE
+    # tailnet -> NPM over vmbr1 (the CT firewall bridge on vmbr0 drops forwarded tailnet traffic)
+    post-up iptables -t nat -A PREROUTING -i tailscale0 -d 192.168.0.203/32 -p tcp -m multiport --dports 80,443 -j DNAT --to-destination 10.10.10.107
+    post-down iptables -t nat -D PREROUTING -i tailscale0 -d 192.168.0.203/32 -p tcp -m multiport --dports 80,443 -j DNAT --to-destination 10.10.10.107
 ```
 
 - `vmbr0`: home LAN. Every container gets a static LAN address with `firewall=1`.
 - `vmbr1`: internal bridge with no physical port, NAT to the LAN. A container's internal address is `10.10.10.<CT id>`; NPM forwards to these.
-- Tailscale runs on the host. It advertises the route `192.168.0.203/32` (NPM) with SNAT, so a tailnet device reaches every `*.home.aniicrite.dev` name from anywhere: those names resolve to `192.168.0.203` in public DNS. The route must be approved once in the Tailscale admin console (Machines -> `home` -> Edit route settings). Reproduce with `tailscale set --advertise-routes=192.168.0.203/32`.
+- Tailscale runs on the host. It advertises the route `192.168.0.203/32` (NPM) with SNAT, so a tailnet device reaches every `*.home.aniicrite.dev` name from anywhere: those names resolve to `192.168.0.203` in public DNS. On mantis, tailnet traffic to `192.168.0.203:80,443` is DNATed to NPM's vmbr1 address `10.10.10.107` (the `vmbr1` `post-up` lines above): forwarded tailnet packets that cross CT 107's firewall bridge on vmbr0 are dropped by conntrack as `INVALID`. The route must be approved in the Tailscale admin console (Machines -> `proxmox-lenovo-minipc` -> Edit route settings); re-registering the machine drops the approval. Reproduce with `tailscale set --advertise-routes=192.168.0.203/32`. Clients need subnet routes on: macOS/iOS/Android app setting "Use Tailscale subnets", Linux `tailscale set --accept-routes`.
 
 ## Containers
 

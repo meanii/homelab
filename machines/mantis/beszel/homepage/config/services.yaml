@@ -24,6 +24,21 @@
         widget:
           type: tdarr
           url: http://10.10.10.118:8265
+- Calendar:
+    - Upcoming:
+        widget:
+          type: calendar
+          view: agenda
+          maxEvents: 10
+          previousDays: 3
+          showTime: true
+          integrations:
+            - type: sonarr
+              service_group: Downloads
+              service_name: Sonarr
+            - type: radarr
+              service_group: Downloads
+              service_name: Radarr
 - Downloads:
     - Sonarr:
         icon: sonarr.svg
@@ -66,6 +81,31 @@
         icon: proxmox.svg
         href: https://proxmox.home.aniicrite.dev
         siteMonitor: https://192.168.0.122:8006
+        widget:
+          type: proxmox
+          url: https://192.168.0.122:8006
+          username: "{{HOMEPAGE_VAR_PVE_TOKEN_ID}}"
+          password: "{{HOMEPAGE_VAR_PVE_TOKEN}}"
+          node: home
+    - Media storage:
+        icon: mdi-harddisk
+        description: crab HDD, media quota
+        href: https://dash.home.aniicrite.dev
+        widget:
+          type: customapi
+          url: https://192.168.0.122:8006/api2/json/nodes/home/storage/crab-media/status
+          headers:
+            Authorization: "PVEAPIToken={{HOMEPAGE_VAR_PVE_TOKEN_ID}}={{HOMEPAGE_VAR_PVE_TOKEN}}"
+          mappings:
+            - field: { data: used }
+              label: Used
+              format: bytes
+            - field: { data: avail }
+              label: Free
+              format: bytes
+            - field: { data: total }
+              label: Quota
+              format: bytes
     - Backup server:
         icon: proxmox-backup-server.svg
         href: https://pbs.home.aniicrite.dev
@@ -78,6 +118,12 @@
         icon: beszel.svg
         href: https://beszel.home.aniicrite.dev
         siteMonitor: http://10.10.10.109:8090
+        widget:
+          type: beszel
+          url: http://10.10.10.109:8090
+          username: "{{HOMEPAGE_VAR_BESZEL_USER}}"
+          password: "{{HOMEPAGE_VAR_BESZEL_PASS}}"
+          version: 2
     - Nginx Proxy Manager:
         icon: nginx-proxy-manager.svg
         href: https://nginx.home.aniicrite.dev
@@ -85,12 +131,19 @@
     - AdGuard Home:
         icon: adguard-home.svg
         href: https://dns.home.aniicrite.dev
-        siteMonitor: http://10.10.10.103:80
+        widget:
+          type: adguard
+          url: http://10.10.10.103:80
 - Apps:
     - Immich:
         icon: immich.svg
         href: https://immich.home.aniicrite.dev
         siteMonitor: http://10.10.10.100:2283
+        widget:
+          type: immich
+          url: http://10.10.10.100:2283
+          key: "{{HOMEPAGE_VAR_IMMICH_KEY}}"
+          version: 2
     - Vaultwarden:
         icon: vaultwarden.svg
         href: https://vw.home.aniicrite.dev
