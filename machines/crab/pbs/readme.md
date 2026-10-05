@@ -2,7 +2,7 @@
 
 Proxmox Backup Server 4.2 in Docker, using the unofficial image [`ayufan/proxmox-backup-server`](https://github.com/ayufan/pve-backup-server-dockerfiles) (Proxmox does not publish one). Mantis sends its vzdump jobs here (storage `crab-pbs`, see [`machines/mantis/proxmox`](../../mantis/proxmox)), including the Immich photo library. This is the only backup of mantis.
 
-UI: `https://pbs.home.aniicrite.dev` (NPM in CT 107 -> `https://192.168.0.10:8007`, home network and tailnet only), or `https://192.168.0.10:8007` directly; user `admin@pbs`. The login is the PBS realm, not PAM; the container has no shell login.
+UI: `https://pbs.home.aniicrite.dev` (NPM in CT 107 -> `https://192.168.0.10:8007`, home network and tailnet only), or `https://192.168.0.10:8007` directly. Default login realm `pocketid` (passkey through PocketID, user `aniicrite@gmail.com@pocketid`, Admin on `/`); `admin@pbs` in the PBS realm stays as a fallback. The container has no shell login.
 
 | Path | What |
 | --- | --- |
@@ -22,6 +22,8 @@ Docker on crab runs rootless, so the container's `backup` user (uid 34) is uid 1
 The vzdump jobs on mantis (`daily-immich` for CT 100, `weekly-backup` for CT 101, 107, 115) have no prune setting of their own; the prune job above decides what is kept.
 
 ## Access
+
+PocketID login: OpenID realm `pocketid` (issuer `https://pocketid.ghost.aniicrite.dev`, username claim `email`, scopes `email profile`, no auto-create), with the PocketID OIDC client `pbs` (callback `https://pbs.home.aniicrite.dev`, not public, no PKCE). Only users created in PBS can log in, so other PocketID accounts are refused. The client id and secret are in `~/.config/homelab/tinyauth.env` on crab (`PBS_OIDC_CLIENT_*`).
 
 Mantis uses the API token `mantis@pbs!pve` with role `DatastoreBackup` on `/datastore/hdd` only: it can write and restore its own backups but not delete or prune them. The user `mantis@pbs` has the same ACL because a token never gets more rights than its user.
 

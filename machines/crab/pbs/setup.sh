@@ -22,4 +22,13 @@ m user create mantis@pbs
 m acl update /datastore/hdd DatastoreBackup --auth-id mantis@pbs   # a token gets at most its user's rights
 m user generate-token mantis@pbs pve
 m acl update /datastore/hdd DatastoreBackup --auth-id 'mantis@pbs!pve'
+# PocketID login (OIDC client "pbs" in PocketID, callback https://pbs.home.aniicrite.dev).
+# Skipped unless PBS_OIDC_CLIENT_ID and PBS_OIDC_CLIENT_SECRET are set.
+if [[ -n ${PBS_OIDC_CLIENT_ID:-} && -n ${PBS_OIDC_CLIENT_SECRET:-} ]]; then
+  m openid create pocketid --issuer-url https://pocketid.ghost.aniicrite.dev \
+    --client-id "$PBS_OIDC_CLIENT_ID" --client-key "$PBS_OIDC_CLIENT_SECRET" \
+    --username-claim email --scopes email,profile --autocreate false --default true
+  m user create "${PBS_OIDC_ADMIN_EMAIL:?}@pocketid"
+  m acl update / Admin --auth-id "${PBS_OIDC_ADMIN_EMAIL}@pocketid"
+fi
 m cert info | grep -i fingerprint
