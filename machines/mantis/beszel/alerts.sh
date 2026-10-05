@@ -5,7 +5,7 @@ set -eu
 cd "$(dirname "$0")"
 : "${TELEGRAM_BOT_TOKEN:?}" "${TELEGRAM_CHAT_ID:?}"
 id_of() { ./api.sh GET "/api/collections/systems/records?fields=id,name&perPage=50" | python3 -c "import sys,json;print(next(s['id'] for s in json.load(sys.stdin)['items'] if s['name']=='$1'))"; }
-ALL=$(for n in mantis crab beetle vultr; do printf '"%s",' "$(id_of $n)"; done | sed 's/,$//')
+ALL=$(for n in mantis crab beetle vultr wl-prod; do printf '"%s",' "$(id_of $n)"; done | sed 's/,$//')
 PHYS=$(for n in mantis crab; do printf '"%s",' "$(id_of $n)"; done | sed 's/,$//')
 
 settings=$(./api.sh GET "/api/collections/user_settings/records" | python3 -c "import sys,json;print(json.load(sys.stdin)['items'][0]['id'])")

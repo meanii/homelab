@@ -1,0 +1,178 @@
+/* Minimal black theme: near-black page, hairline borders, Geist and Geist Mono. */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Geist+Mono:wght@400..500&family=Instrument+Serif:ital@0;1&display=swap");
+
+:root {
+  --ink: #09090b;
+  --panel: #0e0e10;
+  --raise: #141416;
+  --line: #ffffff14;
+  --line-strong: #ffffff24;
+  --fg: #f4f4f5;
+  --muted: #8b8f98;
+  --dim: #7a7e87;
+  --ok: #58d08b;
+  --warn: #e0a650;
+  --err: #f07a7a;
+  --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --serif: "Instrument Serif", "Iowan Old Style", "Times New Roman", serif;
+}
+
+html, body, #__next, #page_wrapper {
+  background: var(--ink) !important;
+  background-image: none !important;
+}
+body, #page_wrapper {
+  color: var(--fg);
+  font-family: var(--sans) !important;
+  -webkit-font-smoothing: antialiased;
+}
+/* Page scrolls inside #inner_wrapper; keep scrolling, hide the bar */
+html, body, #inner_wrapper, .service-card * { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, #inner_wrapper::-webkit-scrollbar,
+.service-card *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Header: date as a serif headline, search as a quiet input */
+#information-widgets {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.information-widget-datetime, .information-widget-datetime * {
+  font-family: var(--serif) !important;
+  font-size: 2.25rem !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+  color: var(--fg) !important;
+}
+.information-widget-search input, .information-widget-search button,
+.information-widget-search > div, .information-widget-form {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  box-shadow: none !important;
+  color: var(--fg) !important;
+  font-family: var(--mono) !important;
+  font-size: 0.8rem !important;
+  border-radius: 0.375rem !important;
+}
+.information-widget-search input::placeholder { color: var(--dim) !important; }
+#information-widgets, #widgets-wrap, #information-widgets-right,
+#information-widgets > div, .information-widget-search { background: transparent !important; box-shadow: none !important; }
+
+/* Group titles: small mono label with a hairline, like the reference section rules */
+.services-group { padding-top: 1.25rem !important; }
+.service-group-name {
+  font-family: var(--mono) !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--dim) !important;
+  margin-bottom: 0.5rem;
+}
+
+/* Cards: flat panel, 1px border, no shadow */
+.service-card {
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: none !important;
+  padding: 0.25rem !important;
+  transition: border-color 0.15s ease, background 0.15s ease !important;
+}
+.service-card:hover { background: var(--raise) !important; border-color: var(--line-strong) !important; }
+.service-icon img { filter: grayscale(1) brightness(1.6); opacity: 0.85; transition: filter 0.15s, opacity 0.15s; }
+.service-card:hover .service-icon img { filter: none; opacity: 1; }
+.service-name { color: var(--fg) !important; font-weight: 500 !important; font-size: 0.875rem !important; }
+.service-description { color: var(--dim) !important; font-family: var(--mono) !important; font-size: 0.7rem !important; }
+
+/* Metric blocks: mono numbers, tiny muted labels */
+.service-block {
+  background: transparent !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 0.375rem !important;
+  min-width: 0;
+  padding: 0.3rem 0.1rem !important;
+  flex: 1 1 auto !important; /* wider labels get more room than short ones */
+  overflow: hidden;
+}
+.service-block > div { overflow: hidden; text-overflow: ellipsis; }
+.service-block > div:first-child {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: -0.02em;
+  white-space: normal; /* "306.9 ms" breaks at the space instead of overflowing */
+  overflow-wrap: normal;
+  line-height: 1.15;
+  max-width: 100%;
+  color: var(--fg) !important;
+}
+.service-block > div:last-child {
+  font-family: var(--sans) !important;
+  font-weight: 400 !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.03em;
+  max-width: 100%;
+  line-height: 1.2;
+  color: var(--dim) !important;
+}
+
+/* Status dots: smaller, in the reference greens/reds. Proxmox badge (click for CPU/RAM) is a hollow ring. */
+.site-monitor-status, .proxmoxstatus { padding: 0.9rem 0.5rem !important; }
+.service-tags > :last-child > div { padding-right: 0.9rem !important; }
+.site-monitor-status > div, .proxmoxstatus > div { height: 0.45rem !important; width: 0.45rem !important; }
+.proxmoxstatus > div { background: transparent !important; border: 1px solid var(--muted); }
+.proxmoxstatus-running > div { border-color: var(--ok); }
+.proxmoxstatus-stopped > div, .proxmoxstatus-paused > div { border-color: var(--err); }
+.proxmoxstatus:hover { background: transparent !important; }
+.proxmoxstatus:hover > div { background: var(--muted) !important; }
+.site-monitor-status .bg-emerald-500, .service-tags .bg-emerald-500 { background: var(--ok) !important; box-shadow: 0 0 0 3px #58d08b1f; }
+.site-monitor-status .bg-rose-500, .service-tags .bg-rose-500 { background: var(--err) !important; box-shadow: 0 0 0 3px #f07a7a1f; }
+
+/* List rows inside widgets (calendar, now playing): no fill, hairline between rows */
+.service-card .h-5.rounded-md {
+  background: transparent !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--line);
+  height: 1.6rem !important;
+  margin-top: 0 !important;
+  display: flex; align-items: center;
+  color: var(--muted) !important;
+}
+.service-card .h-5.rounded-md:last-child { border-bottom: 0; }
+.service-card .h-5.rounded-md > span:first-child { font-family: var(--mono); color: var(--dim); }
+.service-card .h-5.rounded-md .absolute.mt-0\.5, .service-card .h-5.rounded-md > span.absolute { margin-top: 0 !important; position: static; color: var(--fg); }
+.service-card .h-5.rounded-md .truncate { height: auto !important; }
+.service-card .rounded-sm.bg-cyan-500, .service-card .rounded-sm.bg-emerald-500 { border-radius: 9999px !important; }
+
+/* Group header chevron */
+.services-group button svg { color: var(--dim); }
+.service-card .text-xs, .service-card .text-sm { font-feature-settings: "tnum"; }
+.service-card .bg-emerald-500 { background: var(--ok) !important; }
+.service-card .bg-sky-500, .service-card .bg-cyan-500 { background: var(--muted) !important; }
+
+/* Bookmarks */
+.bookmark-group-name {
+  font-family: var(--mono) !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--dim) !important;
+}
+.bookmark-text, .bookmark-icon, .bookmark-description { font-family: var(--sans) !important; }
+li.bookmark > a, .bookmark > a {
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: none !important;
+  border-radius: 0.5rem !important;
+}
+li.bookmark > a:hover, .bookmark > a:hover { background: var(--raise) !important; }
+
+#footer { opacity: 0.4; }
+::selection { background: #7c8aff55; }
+
+/* 4- and 5-column rows are too tight between 1024 and 1280 px: use 3 there */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .services-list.lg\:grid-cols-4, .services-list.lg\:grid-cols-5 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}

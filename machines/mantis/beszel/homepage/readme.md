@@ -9,8 +9,18 @@ up/down dots and live numbers.
   logins as `HOMEPAGE_VAR_*`; the real `.env` is mode 600 in CT 109 and copied to
   `~/.config/homelab/homepage.env` on crab. `HOMEPAGE_ALLOWED_HOSTS` must contain
   the public host name or the page refuses to load.
-- [`config/`](config): `services.yaml` (groups Media, Downloads, Infrastructure,
-  Apps), `settings.yaml`, `widgets.yaml`.
+- [`config/`](config): `services.yaml` (groups Machines, Media, Calendar, Downloads,
+  Infrastructure, Apps), `settings.yaml`, `widgets.yaml`, `proxmox.yaml`, `custom.css`.
+- Machines: one Beszel widget per host (`systemId` = the Beszel system name) with
+  CPU, memory and disk, five columns (mantis, beetle, crab, vultr, wl-prod).
+- Each container's card has a Proxmox ring next to its status dot (green = running);
+  click it for that container's CPU and RAM. `proxmox.yaml` holds the API for this; its
+  block key must be the node name (`home`), matching `proxmoxNode` in `services.yaml`.
+- Theme: `custom.css` makes the page near-black with hairline borders, Geist / Geist
+  Mono and a serif date (fonts from Google Fonts). `settings.yaml` uses `color: zinc`.
+- Homepage caches the rendered page: after changing `settings.yaml`, run
+  `docker compose restart homepage` and then `curl -H 'Host: dash.home.aniicrite.dev'
+  http://127.0.0.1:3000/api/revalidate`, or the old layout stays.
 
 Widgets call the services over vmbr1 (`10.10.10.x`), which the Proxmox firewall
 does not filter. PBS is reached at `192.168.0.10:8007`, allowed for CT 109's LAN

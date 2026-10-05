@@ -1,0 +1,6 @@
+# Proxmox API for the per-container CPU/RAM badges (proxmoxVMID in services.yaml).
+# Same read-only token as the Proxmox widget (PVEAuditor).
+home: # Proxmox node name, matches proxmoxNode in services.yaml
+  url: https://192.168.0.122:8006
+  token: "{{HOMEPAGE_VAR_PVE_TOKEN_ID}}"
+  secret: "{{HOMEPAGE_VAR_PVE_TOKEN}}"

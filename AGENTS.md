@@ -17,6 +17,7 @@ One folder per machine under `machines/<name>/`, one subfolder per stack. Each f
 | beetle | Hetzner VPS | Public entry point: Caddy, frps, NetBird, aliasvault, personal sites | `machines/beetle` |
 | vultr | Vultr VPS | Tailscale peer relay, RustDesk server | `machines/vultr` |
 | crab | this PC, Ubuntu 24.04, on 24x7 | 2 TB HDD `/mnt/data`: PBS datastore (Docker, `machines/crab/pbs`), NFS export `media` for CT 116-118 (1.2 TB project quota); Beszel agent, Ollama, Penpot | `machines/crab` |
+| wl-prod | Hetzner VPS (`ssh wl-prod`) | webhooklocal.com; not part of the homelab, only monitored by Beszel and shown on the dashboard | none |
 | aws | AWS, temporary only | short-lived work; tear down after use, never commit state or credentials | none |
 
 Ask the user for the machine name if a new host appears.
