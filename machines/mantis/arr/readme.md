@@ -259,6 +259,28 @@ With `onDownload` off, imports reach Jellyfin only at the daily 10:00 scan.
 In Sonarr v4/Radarr v6 connections live under notifications, there is no
 separate `/api/v3/connection`.
 
+## Weekly jobs
+
+Two stdlib-only Python scripts in `/root/arr/`, run by host cron in the CT
+(the CT runs in UTC; files in `/etc/cron.d/`, copies here as `*.cron`).
+Both read keys from `/root/arr/.env` and report to Telegram.
+
+- [`missing-report.py`](missing-report.py), Sunday 09:00 IST
+  ([`arr-missing-report.cron`](arr-missing-report.cron)): monitored episodes
+  and movies that decluttarr's searches still have not found.
+- [`weekend-picks.py`](weekend-picks.py), Friday 09:00 IST
+  ([`arr-weekend-picks.cron`](arr-weekend-picks.cron)): adds up to 3 new
+  movies and 2 new documentaries for the weekend. Candidates come from
+  Seerr's TMDb discover (key read from Seerr's `settings.json`), most popular
+  first; it keeps one only if IMDb rates it 7+, it is out on digital or disc,
+  and Radarr's interactive search finds a release the profile approves with
+  enough seeders (20 for movies, 10 for documentaries). That release is
+  grabbed and the movie tagged `weekend-pick`; otherwise the movie is removed
+  again. The movie is added unmonitored until the grab succeeds, so decluttarr's
+  search_missing cannot grab it in parallel. Picks are listed in
+  `/root/arr/weekend-picks.seen` and never picked twice. Skips the week
+  when less than 200 GB is free. `--dry-run` prints candidates only.
+
 ## URLs
 
 LAN (`*.home.aniicrite.dev` via NPM) and direct ports on 192.168.0.209:
@@ -292,6 +314,9 @@ LAN (`*.home.aniicrite.dev` via NPM) and direct ports on 192.168.0.209:
 9. Decluttarr: `config/decluttarr/config.yaml` from `decluttarr.example.yaml` (1000:1000, mode 600), `config/decluttarr/logs/`. Bazarr config.yaml + languages form POST; Seerr with
    `seerr-setup.py` (after Jellyfin, Radarr and Sonarr are set up);
    Telegram; NPM hosts (script via CT 107 API); firewall file.
+10. Weekly jobs: copy `missing-report.py` and `weekend-picks.py` to
+    `/root/arr/` (mode 700) and the `*.cron` files to `/etc/cron.d/` without
+    the `.cron` suffix.
 
 ## API calls used
 
