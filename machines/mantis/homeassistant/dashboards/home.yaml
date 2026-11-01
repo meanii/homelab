@@ -1,0 +1,147 @@
+# dashboard-home — rooms. Pushed by ../apply.py (lovelace/config/save).
+title: Home
+views:
+  - title: Home
+    path: home
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Home
+            icon: mdi:home-outline
+            badges:
+              - type: entity
+                entity: person.owner
+                show_state: true
+              - type: entity
+                entity: sensor.a059_battery_level
+                show_state: true
+          - type: weather-forecast
+            entity: weather.forecast_home
+            forecast_type: daily
+            grid_options: { columns: 12 }
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Master Room
+            icon: mdi:bed-king-outline
+            badges:
+              - type: entity
+                entity: sensor.master_room_temperature
+                show_state: true
+              - type: entity
+                entity: sensor.master_room_humidity
+                show_state: true
+          - type: tile
+            entity: light.desk_lamp
+            name: Desk lamp
+            color: primary # else HA paints a colour-temp light orange
+            features:
+              - type: light-brightness
+            features_position: bottom
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: light.master_room_lamp
+            name: Lamp
+            icon: mdi:lamp
+            color: primary
+            features:
+              - type: light-brightness
+            features_position: bottom
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: fan.master_room_fan
+            name: Fan
+            icon: mdi:ceiling-fan
+            features:
+              - type: fan-speed
+            features_position: bottom
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: switch.master_room_fan_sleep_mode
+            name: Fan sleep
+            icon: mdi:sleep
+            vertical: true
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: select.master_room_fan_set_timer
+            name: Fan timer
+            icon: mdi:timer-outline
+            vertical: true
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: light.master_room_fan_led
+            name: Fan LED
+            icon: mdi:led-on
+            vertical: true
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: fan.air_purifier
+            name: Air purifier
+            icon: mdi:air-purifier
+            features:
+              - type: fan-preset-modes
+                style: dropdown
+            features_position: inline
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: select.air_purifier_level
+            name: Purifier level
+            features:
+              - type: select-options
+            features_position: inline
+            grid_options: { columns: 12 }
+          - type: sensor
+            entity: sensor.air_purifier_pm2_5
+            name: PM2.5
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: sensor
+            entity: sensor.master_room_temperature
+            name: Temperature
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: tile
+            entity: sensor.air_purifier_aqi
+            name: AQI (avg)
+          - type: tile
+            entity: sensor.air_purifier_filter_days_left
+            name: Filter left
+            icon: mdi:air-filter
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Second Room
+            icon: mdi:bed-outline
+          - type: tile
+            entity: fan.second_room_fan
+            name: Fan
+            icon: mdi:ceiling-fan
+            features:
+              - type: fan-speed
+            features_position: bottom
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: switch.second_room_fan_sleep_mode
+            name: Fan sleep
+            icon: mdi:sleep
+            vertical: true
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: select.second_room_fan_set_timer
+            name: Fan timer
+            icon: mdi:timer-outline
+            vertical: true
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: light.second_room_fan_led
+            name: Fan LED
+            icon: mdi:led-on
+            vertical: true
+            grid_options: { columns: 4 }

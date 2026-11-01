@@ -1,0 +1,143 @@
+# Matches dash.home.aniicrite.dev: near-black, hairline borders, Geist, one green accent.
+# Pushed by ../apply.py (scp + frontend.reload_themes).
+homelab:
+  # palette
+  hl-ink: "#09090b"
+  hl-panel: "#0e0e10"
+  hl-raise: "#141416"
+  hl-line: "#ffffff14"
+  hl-line-strong: "#ffffff24"
+  hl-fg: "#f4f4f5"
+  hl-muted: "#8b8f98"
+  hl-dim: "#7a7e87"
+  hl-accent: "#58d08b"
+
+  # fonts (Geist / Geist Mono are loaded as a dashboard resource)
+  primary-font-family: '"Geist", ui-sans-serif, system-ui, sans-serif'
+  paper-font-common-base_-_font-family: var(--primary-font-family)
+  paper-font-body1_-_font-family: var(--primary-font-family)
+  mdc-typography-font-family: var(--primary-font-family)
+  ha-font-family-body: var(--primary-font-family)
+  ha-font-family-heading: var(--primary-font-family)
+  ha-font-family-code: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace'
+  code-font-family: var(--ha-font-family-code)
+
+  # surfaces
+  primary-background-color: var(--hl-ink)
+  lovelace-background: var(--hl-ink)
+  secondary-background-color: var(--hl-panel)
+  card-background-color: var(--hl-panel)
+  ha-card-background: var(--hl-panel)
+  ha-dialog-surface-background: var(--hl-raise)
+  mdc-theme-surface: var(--hl-raise)
+  input-fill-color: var(--hl-raise)
+  code-editor-background-color: var(--hl-raise)
+  markdown-code-background-color: var(--hl-raise)
+  clear-background-color: var(--hl-ink)
+
+  # cards: flat panel, hairline, 8px like the Homepage service cards, no shadow
+  ha-card-border-width: 1px
+  ha-card-border-color: var(--hl-line)
+  ha-card-border-radius: 8px
+  ha-card-box-shadow: none
+  ha-card-header-font-size: 12px
+  ha-card-header-color: var(--hl-dim)
+  divider-color: var(--hl-line)
+  outline-color: var(--hl-line-strong)
+  outline-hover-color: var(--hl-muted)
+
+  # section headings: small dim label (Homepage .service-group-name)
+  ha-heading-card-title-font-size: 12px
+  ha-heading-card-title-font-weight: 500
+  ha-heading-card-title-color: var(--hl-dim)
+  ha-heading-badge-text-color: var(--hl-fg)
+
+  # tiles: value first (fg, medium), label second (dim, small) — Homepage metric blocks
+  ha-tile-icon-border-radius: 8px
+  ha-tile-info-primary-font-size: 12px
+  ha-tile-info-primary-font-weight: 400
+  ha-tile-info-primary-color: var(--hl-muted)
+  ha-tile-info-secondary-font-size: 14px
+  ha-tile-info-secondary-font-weight: 500
+  ha-tile-info-secondary-color: var(--hl-fg)
+  ha-badge-border-radius: 6px
+
+  # text
+  primary-text-color: var(--hl-fg)
+  text-primary-color: var(--hl-fg)
+  secondary-text-color: var(--hl-muted)
+  disabled-text-color: "#5a5e66"
+  header-height: 56px
+  app-header-background-color: var(--hl-ink)
+  app-header-text-color: var(--hl-fg)
+  app-header-border-bottom: 1px solid var(--hl-line)
+
+  # accent: one green for everything "on"; everything else grey
+  primary-color: var(--hl-accent)
+  accent-color: var(--hl-accent)
+  rgb-primary-color: "88, 208, 139"
+  rgb-accent-color: "88, 208, 139"
+  mdc-theme-primary: var(--hl-accent)
+  text-accent-color: var(--hl-ink)
+  switch-checked-color: var(--hl-accent)
+  slider-color: var(--hl-accent)
+  state-icon-color: var(--hl-muted)
+  state-inactive-color: var(--hl-muted)
+  state-active-color: var(--hl-accent)
+  state-light-active-color: var(--hl-accent)
+  state-fan-active-color: var(--hl-accent)
+  state-switch-active-color: var(--hl-accent)
+  state-binary_sensor-active-color: var(--hl-accent)
+  state-media_player-active-color: var(--hl-accent)
+  state-update-active-color: var(--hl-accent)
+  state-person-home-color: var(--hl-accent)
+  state-person-active-color: var(--hl-muted)
+  state-device_tracker-home-color: var(--hl-accent)
+  state-device_tracker-active-color: var(--hl-muted)
+  state-sun-above_horizon-color: var(--hl-muted)
+  state-sun-below_horizon-color: var(--hl-muted)
+  state-sensor-battery-high-color: var(--hl-accent)
+  state-sensor-battery-medium-color: "#e0a650"
+  state-sensor-battery-low-color: "#f07a7a"
+  state-on-color: var(--hl-accent)
+  success-color: "#58d08b"
+  warning-color: "#e0a650"
+  error-color: "#f07a7a"
+  info-color: "#7aa7f0"
+
+  # graphs (history / sensor sparklines)
+  graph-color-1: var(--hl-accent)
+  graph-color-2: "#7aa7f0"
+  graph-color-3: "#e0a650"
+  graph-color-4: "#f07a7a"
+  graph-color-5: var(--hl-muted)
+
+  # sidebar
+  sidebar-background-color: var(--hl-ink)
+  sidebar-text-color: var(--hl-muted)
+  sidebar-icon-color: var(--hl-muted)
+  sidebar-selected-text-color: var(--hl-fg)
+  sidebar-selected-icon-color: var(--hl-accent)
+  sidebar-menu-button-background-color: var(--hl-ink)
+  sidebar-border-color: var(--hl-line)
+
+  # tables / misc
+  table-row-background-color: var(--hl-panel)
+  table-row-alternative-background-color: var(--hl-raise)
+  data-table-background-color: var(--hl-panel)
+  scrollbar-thumb-color: var(--hl-line-strong)
+  codemirror-property: var(--hl-accent)
+
+  # dark-only: makes HA force dark mode and use its dark base (inputs, dialogs, menus)
+  modes:
+    dark:
+      input-fill-color: var(--hl-raise)
+      mdc-text-field-fill-color: var(--hl-raise)
+      mdc-select-fill-color: var(--hl-raise)
+      ha-color-form-background: var(--hl-raise)
+      mdc-text-field-ink-color: var(--hl-fg)
+      input-ink-color: var(--hl-fg)
+      mdc-text-field-label-ink-color: var(--hl-muted)
+      input-label-ink-color: var(--hl-muted)
+      mdc-text-field-idle-line-color: var(--hl-line-strong)
+      input-idle-line-color: var(--hl-line-strong)

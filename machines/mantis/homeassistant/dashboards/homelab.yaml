@@ -1,0 +1,274 @@
+# dashboard-homelab — servers. Pushed by ../apply.py (lovelace/config/save).
+# Section order = grid order (3 per row); rows are grouped by similar height so the grid has no holes.
+title: Homelab
+views:
+  - title: Homelab
+    path: overview
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: mantis
+            icon: mdi:server
+            badges:
+              - type: entity
+                entity: sensor.home_uptime
+                show_state: true
+          - type: sensor
+            entity: sensor.home_cpu_usage
+            name: CPU
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: sensor
+            entity: sensor.home_memory_usage_percentage
+            name: Memory
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: tile
+            entity: sensor.storage_local_lvm_storage_usage_percentage
+            name: local-lvm
+            icon: mdi:harddisk
+          - type: tile
+            entity: sensor.storage_slowbird_storage_usage_percentage
+            name: slowbird
+            icon: mdi:harddisk
+          - type: tile
+            entity: sensor.storage_crab_media_storage_usage_percentage
+            name: crab-media
+            icon: mdi:harddisk
+          - type: tile
+            entity: sensor.storage_crab_pbs_storage_usage_percentage
+            name: crab-pbs
+            icon: mdi:harddisk
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Power
+            icon: mdi:flash-outline
+            badges:
+              - type: entity
+                entity: switch.smart_plug
+                show_state: true
+                tap_action: { action: none }
+          - type: sensor
+            entity: sensor.smart_plug_power
+            name: Power now
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: sensor
+            entity: sensor.smart_plug_voltage
+            name: Voltage
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          # shown only while tripped
+          - type: conditional
+            conditions: [{ condition: state, entity: binary_sensor.smart_plug_overloaded, state: "on" }]
+            card: { type: tile, entity: binary_sensor.smart_plug_overloaded, name: Overloaded, color: red, grid_options: { columns: 12 } }
+          - type: conditional
+            conditions: [{ condition: state, entity: binary_sensor.smart_plug_overheated, state: "on" }]
+            card: { type: tile, entity: binary_sensor.smart_plug_overheated, name: Overheated, color: red, grid_options: { columns: 12 } }
+          - type: tile
+            entity: sensor.homeserver_cost_today
+            name: Cost today
+            icon: mdi:currency-inr
+          - type: tile
+            entity: sensor.smart_plug_energy_today
+            name: Units today
+          - type: tile
+            entity: sensor.homeserver_cost_this_month
+            name: Cost this month
+            icon: mdi:currency-inr
+          - type: tile
+            entity: sensor.smart_plug_energy_month
+            name: Units this month
+          - type: tile
+            entity: sensor.homeserver_cost_total
+            name: Cost till now
+            icon: mdi:cash-multiple
+            grid_options: { columns: 12 }
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Network
+            icon: mdi:lan
+            badges:
+              - type: entity
+                entity: switch.adguard_home_protection
+                name: AdGuard
+                show_state: true
+          - type: sensor
+            entity: sensor.archer_c6_ac1200_mu_mimo_wi_fi_router_download_speed
+            name: WAN down
+            icon: mdi:download
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: sensor
+            entity: sensor.archer_c6_ac1200_mu_mimo_wi_fi_router_upload_speed
+            name: WAN up
+            icon: mdi:upload
+            graph: line
+            hours_to_show: 24
+            detail: 2
+          - type: tile
+            entity: sensor.adguard_home_dns_queries
+            name: DNS queries
+            grid_options: { columns: 12 }
+          - type: tile
+            entity: sensor.adguard_home_dns_queries_blocked_ratio
+            name: Blocked
+            grid_options: { columns: 12 }
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Machines
+            icon: mdi:server-network
+          - type: glance
+            title: crab
+            columns: 4
+            show_icon: false
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: binary_sensor.crab, name: Status }
+              - { entity: sensor.crab_cpu, name: CPU }
+              - { entity: sensor.crab_memory, name: Memory }
+              - { entity: sensor.crab_disk, name: Disk }
+          - type: glance
+            title: Hetzner · beetle
+            columns: 4
+            show_icon: false
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: binary_sensor.hetzner_beetle, name: Status }
+              - { entity: sensor.hetzner_beetle_cpu, name: CPU }
+              - { entity: sensor.hetzner_beetle_memory, name: Memory }
+              - { entity: sensor.hetzner_beetle_disk, name: Disk }
+          - type: glance
+            title: Vultr
+            columns: 4
+            show_icon: false
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: binary_sensor.vultr, name: Status }
+              - { entity: sensor.vultr_cpu, name: CPU }
+              - { entity: sensor.vultr_memory, name: Memory }
+              - { entity: sensor.vultr_disk, name: Disk }
+          - type: glance
+            title: AWS · wl-prod
+            columns: 4
+            show_icon: false
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: binary_sensor.aws_wl_prod, name: Status }
+              - { entity: sensor.aws_wl_prod_cpu, name: CPU }
+              - { entity: sensor.aws_wl_prod_memory, name: Memory }
+              - { entity: sensor.aws_wl_prod_disk, name: Disk }
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Media
+            icon: mdi:filmstrip
+          - type: tile
+            entity: sensor.jellyfin_active_clients
+            name: Jellyfin streams
+          - type: tile
+            entity: sensor.seerr_pending_requests
+            name: Requests pending
+          - type: tile
+            entity: sensor.seerr_processing_requests
+            name: Requests processing
+          - type: tile
+            entity: sensor.seerr_movie_requests
+            name: Movies requested
+          - type: tile
+            entity: sensor.seerr_tv_requests
+            name: Shows requested
+          - type: tile
+            entity: sensor.radarr_disk_space_movies
+            name: Movies disk free
+          - type: tile
+            entity: sensor.qbittorrent_download_speed
+            name: qBit down
+            icon: mdi:download
+          - type: tile
+            entity: sensor.qbittorrent_upload_speed
+            name: qBit up
+            icon: mdi:upload
+          - type: tile
+            entity: sensor.qbittorrent_active_torrents
+            name: Active torrents
+          - type: tile
+            entity: sensor.sonarr_upcoming
+            name: Episodes upcoming
+          - type: glance
+            title: Immich
+            columns: 3
+            show_icon: false
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: sensor.immich_photos_count, name: Photos }
+              - { entity: sensor.immich_videos_count, name: Videos }
+              - { entity: sensor.immich_disk_available, name: Disk free }
+          - type: calendar
+            entities: [calendar.radarr, calendar.sonarr]
+            initial_view: listWeek
+            grid_options: { columns: 12 }
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Guests
+            icon: mdi:cube-outline
+          # icon green = running, grey = stopped (state_color), no "Running" text
+          - type: glance
+            columns: 3
+            show_state: false
+            state_color: true
+            grid_options: { columns: 12 }
+            entities:
+              - { entity: binary_sensor.nginxproxymanager_status, name: NPM, icon: mdi:cube-outline }
+              - { entity: binary_sensor.adguard_status, name: AdGuard, icon: mdi:cube-outline }
+              - { entity: binary_sensor.vaultwarden_status, name: Vaultwarden, icon: mdi:cube-outline }
+              - { entity: binary_sensor.pocketid_status, name: PocketID, icon: mdi:cube-outline }
+              - { entity: binary_sensor.immich_status, name: Immich, icon: mdi:cube-outline }
+              - { entity: binary_sensor.jellyfin_status, name: Jellyfin, icon: mdi:cube-outline }
+              - { entity: binary_sensor.arr_status, name: Arr, icon: mdi:cube-outline }
+              - { entity: binary_sensor.tdarr_status, name: Tdarr, icon: mdi:cube-outline }
+              - { entity: binary_sensor.beszel_status, name: Beszel, icon: mdi:cube-outline }
+              - { entity: binary_sensor.downly_status, name: Downly, icon: mdi:cube-outline }
+              - { entity: binary_sensor.ct104_status, name: Hermes 104, icon: mdi:cube-outline }
+              - { entity: binary_sensor.ct106_status, name: Hermes 106, icon: mdi:cube-outline }
+              - { entity: binary_sensor.ct102_status, name: CT 102, icon: mdi:cube-outline }
+              - { entity: binary_sensor.gh_runner_status, name: GH runner, icon: mdi:cube-outline }
+              - { entity: binary_sensor.homeassistant_status, name: Home Assistant, icon: mdi:home-assistant }
+          - type: heading
+            heading: System
+            icon: mdi:cog-outline
+          - type: tile
+            entity: update.home_assistant_core_update
+            name: Core
+          - type: tile
+            entity: update.home_assistant_operating_system_update
+            name: OS
+          - type: tile
+            entity: update.home_assistant_supervisor_update
+            name: Supervisor
+          - type: tile
+            entity: update.adguard_home
+            name: AdGuard
+          - type: tile
+            entity: sensor.backup_last_successful_automatic_backup
+            name: Last backup
+          - type: tile
+            entity: sensor.backup_next_scheduled_automatic_backup
+            name: Next backup

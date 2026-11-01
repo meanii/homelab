@@ -52,6 +52,7 @@ iface vmbr1 inet static
 | 116 | jellyfin | [`jellyfin/`](jellyfin) at `/root/jellyfin`, Intel QuickSync, media from crab at `/data` | yes, config only |
 | 117 | arr | [`arr/`](arr) at `/root/arr`: qBittorrent, Prowlarr, Sonarr, Radarr, Bazarr, Seerr, Recyclarr, Unpackerr, FlareSolverr | yes, config only |
 | 118 | tdarr | [`tdarr/`](tdarr) at `/root/tdarr`, converts the library to HEVC with QuickSync, 03:00-09:00 | yes, config only |
+| VM 120 | homeassistant | [`homeassistant/`](homeassistant): Home Assistant OS, theme and dashboards as YAML | no, Home Assistant keeps its own automatic backups |
 
 CT 100, 101 and 107 also run [cup](nginxproxymanager/cup) (container update checker) from `/root/.cup/compose.yaml`.
 
